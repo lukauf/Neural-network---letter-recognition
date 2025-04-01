@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "/L5mj3kNipc=",
+  "dgSpecHash": "EpqfpDrvyvY=",
   "success": true,
-  "projectFilePath": "F:\\Repos\\Neural-network---letter-recognition\\EP-IA\\NeuralNetwork\\NeuralNetwork.csproj",
+  "projectFilePath": "F:\\Repos\\Neural-network---letter-recognition\\C# Model\\EP-IA\\NeuralNetwork\\NeuralNetworkProject.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\tiago\\.nuget\\packages\\system.configuration.configurationmanager\\9.0.3\\system.configuration.configurationmanager.9.0.3.nupkg.sha512",
     "C:\\Users\\tiago\\.nuget\\packages\\system.diagnostics.eventlog\\9.0.3\\system.diagnostics.eventlog.9.0.3.nupkg.sha512",

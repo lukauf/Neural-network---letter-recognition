@@ -1,15 +1,15 @@
 {
   "format": 1,
   "restore": {
-    "F:\\Repos\\Neural-network---letter-recognition\\C# Model\\EP-IA\\NeuralNetwork\\NeuralNetwork.csproj": {}
+    "F:\\Repos\\Neural-network---letter-recognition\\C# Model\\EP-IA\\NeuralNetwork\\NeuralNetworkProject.csproj": {}
   },
   "projects": {
-    "F:\\Repos\\Neural-network---letter-recognition\\C# Model\\EP-IA\\NeuralNetwork\\NeuralNetwork.csproj": {
+    "F:\\Repos\\Neural-network---letter-recognition\\C# Model\\EP-IA\\NeuralNetwork\\NeuralNetworkProject.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "F:\\Repos\\Neural-network---letter-recognition\\C# Model\\EP-IA\\NeuralNetwork\\NeuralNetwork.csproj",
-        "projectName": "NeuralNetwork",
-        "projectPath": "F:\\Repos\\Neural-network---letter-recognition\\C# Model\\EP-IA\\NeuralNetwork\\NeuralNetwork.csproj",
+        "projectUniqueName": "F:\\Repos\\Neural-network---letter-recognition\\C# Model\\EP-IA\\NeuralNetwork\\NeuralNetworkProject.csproj",
+        "projectName": "NeuralNetworkProject",
+        "projectPath": "F:\\Repos\\Neural-network---letter-recognition\\C# Model\\EP-IA\\NeuralNetwork\\NeuralNetworkProject.csproj",
         "packagesPath": "C:\\Users\\tiago\\.nuget\\packages\\",
         "outputPath": "F:\\Repos\\Neural-network---letter-recognition\\C# Model\\EP-IA\\NeuralNetwork\\obj\\",
         "projectStyle": "PackageReference",

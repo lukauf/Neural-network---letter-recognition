@@ -4,19 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NeuralNetwork.Lib
+namespace NeuralNetworkProject.Lib
 {
     internal class Neuron
     {
-        protected List<Dendrite> _dendrites;
+        internal List<Dendrite> Dendrites;
         double Bias { get; set; }
 
         public Neuron(int dentritesQtt)
         {
-            _dendrites = new List<Dendrite>();
+            Dendrites = new List<Dendrite>();
             for (int i = 0; i < dentritesQtt; i++)
             {
-                _dendrites.Add(new Dendrite());
+                Dendrites.Add(new Dendrite());
             }
         }
 
@@ -29,7 +29,7 @@ namespace NeuralNetwork.Lib
         private double CalculateY_in ()
         {
             double y_in = 0;
-            foreach (var dendrite in _dendrites)
+            foreach (var dendrite in Dendrites)
             {
                 if (dendrite.Value != null)
                 {
@@ -41,7 +41,7 @@ namespace NeuralNetwork.Lib
 
         private int CalculateOutput (double y_in)
         {
-            return y_in > 0.5 ? 1 : -1;
+            return y_in > 0.0 ? 1 : -1;
         }
     }
 }

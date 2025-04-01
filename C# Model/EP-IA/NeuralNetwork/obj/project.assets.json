@@ -176,11 +176,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "F:\\Repos\\Neural-network---letter-recognition\\EP-IA\\NeuralNetwork\\NeuralNetwork.csproj",
-      "projectName": "NeuralNetwork",
-      "projectPath": "F:\\Repos\\Neural-network---letter-recognition\\EP-IA\\NeuralNetwork\\NeuralNetwork.csproj",
+      "projectUniqueName": "F:\\Repos\\Neural-network---letter-recognition\\C# Model\\EP-IA\\NeuralNetwork\\NeuralNetworkProject.csproj",
+      "projectName": "NeuralNetworkProject",
+      "projectPath": "F:\\Repos\\Neural-network---letter-recognition\\C# Model\\EP-IA\\NeuralNetwork\\NeuralNetworkProject.csproj",
       "packagesPath": "C:\\Users\\tiago\\.nuget\\packages\\",
-      "outputPath": "F:\\Repos\\Neural-network---letter-recognition\\EP-IA\\NeuralNetwork\\obj\\",
+      "outputPath": "F:\\Repos\\Neural-network---letter-recognition\\C# Model\\EP-IA\\NeuralNetwork\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

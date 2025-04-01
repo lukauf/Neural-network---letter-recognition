@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NeuralNetwork.Lib
+namespace NeuralNetworkProject.Lib
 {
     internal class Dendrite
     {
