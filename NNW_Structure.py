@@ -22,7 +22,7 @@ class MLP:
         def sigmoid(z): #activation function that returns values between [0,1] that gets
                 return 1/(1 + numpy.exp(-z))
 
-         def FowardPropagation(self, X):
+        def FowardPropagation(self, X):
                 Z = numpy.dot(X, self.W1) + self.b1 #X(Ntx120) x W1(120x60) + b1 = Z(Ntx60)
                 X2 = self.relu(Z)#X2(NtX60) the function relu is applied to every value of the array, so we get an array which every value is the return of this function that was applied on each value of the Z array
                 Z2 = numpy.dot(X2, self.W2)#X2(Ntx60) x W2(60x26) = Z2(1x26)
@@ -30,15 +30,29 @@ class MLP:
                 return X3
 
         def BackPropagation(self,X, Y, alfa): #first input at the network == X(Ntx120) Nt = Number of examples offered as training samples, Y(Ntx26) = Expected output, alfa = learning rate
-                output = self.fowardpass(X)
+                Z = numpy.dot(X, self.W1)+ self.b1
+                X2 = self.relu(Z)
+
+                Z2 = numpy.dot(X2, self.W2) + self.b2
+                X3 = self.sigmoid(Z2)
         
-                E = Y - output #Raw error
+                E = Y - X3 #Raw error
         
-                dZ3 = E * (output * (1 - output)) #Error multiplied by the sigmoid derivative results in the output gradient, calculates how much each output contributed to the total error
-                dW2 = numpy.dot(self.X2.T, dZ3) #error propagation to the weights of the hidden layer X2 = weights of the hidden layer, we use the transposed matrix so the multiplication is possible
+                dZ3 = E * (X3 * (1 - X3)) #Error multiplied by the sigmoid derivative results in the output gradient, calculates how much each output contributed to the total error
+                dW2 = numpy.dot(X2.T, dZ3) #error propagation to the weights of the hidden layer X2 = weights of the hidden layer, we use the transposed matrix so the multiplication is possible
+                db2 = numpy.sum(dZ3, axis=0, keepdims=True)
 
+                #hidden layer propagation
+                dX2 = numpy.dot(dZ3, self.W2.T)
+                dZ2 = dX2 * (Z>0)
+                dW1 = numpy.dot(X.T, dZ2)
+                db1 = numpy.sum(dZ2, axis=0, keepdims= True)
 
-
+                #descendant gradient - updating weights and biases
+                self.W2 -= alfa * dW2
+                self.b2 -= alfa * db2
+                self.W1 -= alfa * dW1
+                self.b1 -= alfa*db1
 
 
 
