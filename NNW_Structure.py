@@ -40,13 +40,13 @@ class MLP:
         
                 dZ3 = E * (X3 * (1 - X3)) #Error multiplied by the sigmoid derivative results in the output gradient, calculates how much each output contributed to the total error
                 dW2 = numpy.dot(X2.T, dZ3) #error propagation to the weights of the hidden layer X2 = weights of the hidden layer, we use the transposed matrix so the multiplication is possible
-                db2 = numpy.sum(dZ3, axis=0, keepdims=True)
+                db2 = numpy.sum(dZ3, axis=0, keepdims=True) #output bias gradient 
 
                 #hidden layer propagation
-                dX2 = numpy.dot(dZ3, self.W2.T)
-                dZ2 = dX2 * (Z>0)
-                dW1 = numpy.dot(X.T, dZ2)
-                db1 = numpy.sum(dZ2, axis=0, keepdims= True)
+                dX2 = numpy.dot(dZ3, self.W2.T) # Error propagated from output layer to hidden layer
+                dZ2 = dX2 * (Z>0)  # hidden layer activation gradient (ReLU)
+                dW1 = numpy.dot(X.T, dZ2) # Input weights gradient
+                db1 = numpy.sum(dZ2, axis=0, keepdims= True) #hidden layer bias gradient
 
                 #descendant gradient - updating weights and biases
                 self.W2 -= alfa * dW2
