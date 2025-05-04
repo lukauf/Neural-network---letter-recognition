@@ -14,7 +14,7 @@ def train_logic_ports(problem, n_hidden, learning_rate, epochs):
     print(f"\nResultados da porta {problem}:")
     for i in range(len(input)):
         prediction = mlp.predict(input[i].reshape(1, -1))
-        print(f"Entrada: {input[i]} -> Saída esperada: {desired_output[i][0]} | Prevista: {int(prediction[0][0])}")
+        print(f"Entrada: {input[i]} -> Saída esperada: {int(desired_output[i][0])} | Prevista: {int(prediction[0][0])}")
 
 
 def main(args):

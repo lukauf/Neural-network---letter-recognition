@@ -89,7 +89,7 @@ class MLP:
                         # For each 1000 epochs, update and print the MSE
                         if epoch %1000 == 0:
                                 loss = numpy.mean((Y - self.A2) ** 2)
-                                print(f"Epoch {epoch} - Loss: {loss:.4f}")
+                                print(f"Época {epoch} - MSE: {loss:.4f}")
 
         def predict(self, X):
                 output = self.FowardPropagation(X)
