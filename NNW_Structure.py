@@ -49,7 +49,7 @@ class MLP:
                 # Output error
                 E = Y - self.A2 #Raw error
                 # Output layer gradient
-                dZ2 = E * sigmoid_derivative(self.A2)
+                dZ2 = E * self.sigmoid_derivative(self.A2)
                 # Output layer weight gradient
                 dW2 = numpy.dot(self.A1.T, dZ2) / m
                 # Output layer bias gradient 

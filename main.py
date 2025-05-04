@@ -4,7 +4,7 @@ import numpy
 args = sys.argv
 
 def train_logic_ports(problem, n_hidden, learning_rate, epochs):
-    data = numpy.genfromtxt(f'../sets/portas_logicas/problem{problem}.csv', delimiter=',', encoding='utf-8-sig')
+    data = numpy.genfromtxt(f'./portas_logicas/problem{problem}.csv', delimiter=',', encoding='utf-8-sig')
     input = data[:, :2]
     desired_output = data[:, 2] 
 
@@ -18,12 +18,12 @@ def train_logic_ports(problem, n_hidden, learning_rate, epochs):
 
 
 def main(args):
-    if len(args) != 4:
+    if len(args) != 5:
         raise Exception("Uso: \"python main.py <problema> <épocas> <hidden layer> <learning rate>\"")
 
     problem = args[1] 
-    epochs = args[2]
-    n_hidden = args[3]
+    epochs = int(args[2])
+    n_hidden = int(args[3])
     learning_rate = args[4]
     if(problem == "AND" or problem == "OR" or problem == "XOR"):
         train_logic_ports(problem, n_hidden, learning_rate, epochs)
