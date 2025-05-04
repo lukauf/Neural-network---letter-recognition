@@ -1,12 +1,13 @@
 import numpy
 
 class MLP:
-        def __init__(self, n_input, n_hidden, n_output): #120 input neurons, 60 (arbitrary number) neurons at hidden layer, and 26 output neurons, (26 letters/results)
+        def __init__(self, n_input, n_hidden, n_output, learning_rate): #120 input neurons, 60 (arbitrary number) neurons at hidden layer, and 26 output neurons, (26 letters/results)
 
                 self.W1 = numpy.random.randn(n_input, n_hidden) * 0.01 #weight matrix 120x60 input layer -> hidden layer
                 self.W2 = numpy.random.randn(n_hidden, n_output)  * 0.01 #weight matrix hidden layer -> output layer
-                self.b1 = numpy.random.randn(1, 1) #bias matrix 60x1 hidden layer bias matrix
-                self.b2 = numpy.random.randn()
+                self.b1 = numpy.random.randn(1, n_hidden) #bias matrix 60x1 hidden layer bias matrix
+                self.b2 = numpy.random.randn(1,n_output)
+                self.learning_rate = learning_rate
 
         #each collumn represents the weights associated to a neuron
 
@@ -17,43 +18,71 @@ class MLP:
         def relu(z): #activation function that returns 0 if the z < 0 and returns z if z > 0, z is the total input of the neuron, sum considering the weights + the bias
                 return numpy.maximum(0, z)
 
-
+        @staticmethod
+        def relu_derivative(z):
+                return (z>0).astype(float)
+        
         @staticmethod
         def sigmoid(z): #activation function that returns values between [0,1] that gets
                 return 1/(1 + numpy.exp(-z))
 
+        @staticmethod
+        def sigmoid_derivative(z):
+                return z * (1-z)
+
         def FowardPropagation(self, X):
-                Z = numpy.dot(X, self.W1) + self.b1 #X(Ntx120) x W1(120x60) + b1 = Z(Ntx60)
-                X2 = self.relu(Z)#X2(NtX60) the function relu is applied to every value of the array, so we get an array which every value is the return of this function that was applied on each value of the Z array
-                Z2 = numpy.dot(X2, self.W2)#X2(Ntx60) x W2(60x26) = Z2(1x26)
-                X3 = self.sigmoid(Z2)#X3(Ntx26), X3 has the values between 0 and 1, we will later get the biggest value to see which letter is it (each slot of the array is a reference to a letter of the alfabet)
-                return X3
+                # Multiply X by W1 weights and sum the bias in the hidden layer
+                self.Z1 = numpy.dot(X, self.W1) + self.b1 #X(Ntx120) x W1(120x60) + b1 = Z(Ntx60)
+                # Apply ReLU activation function in the hidden layer "output"
+                self.A1 = self.relu(self.Z1)#X2(NtX60) the function relu is applied to every value of the array, so we get an array which every value is the return of this function that was applied on each value of the Z array
+                # Multiply hidden layer "output" by W2 weights and sum the bias in the output layer
+                self.Z2 = numpy.dot(self.A1, self.W2) + self.b2#X2(Ntx60) x W2(60x26) = Z2(1x26)
+                # Apply sigmoid in the output
+                self.A2 = self.sigmoid(self.Z2)#X3(Ntx26), X3 has the values between 0 and 1, we will later get the biggest value to see which letter is it (each slot of the array is a reference to a letter of the alfabet)
+                return self.A2
 
-        def BackPropagation(self,X, Y, alfa): #first input at the network == X(Ntx120) Nt = Number of examples offered as training samples, Y(Ntx26) = Expected output, alfa = learning rate
-                Z = numpy.dot(X, self.W1)+ self.b1
-                X2 = self.relu(Z)
+        # Adjust the weights based on error between the correct ouput (Y) and the neural network calculus output (self.A2)
+        def BackPropagation(self,X, Y): #first input at the network == X(Ntx120) Nt = Number of examples offered as training samples, Y(Ntx26) = Expected output, alfa = learning rate
+                # Sample number (here is taking by number of "tuples")
+                m = X.shape[0] 
 
-                Z2 = numpy.dot(X2, self.W2) + self.b2
-                X3 = self.sigmoid(Z2)
+                # Output error
+                E = Y - self.A2 #Raw error
+                # Output layer gradient
+                dZ2 = E * sigmoid_derivative(self.A2)
+                # Output layer weight gradient
+                dW2 = numpy.dot(self.A1.T, dZ2) / m
+                # Output layer bias gradient 
+                db2 = numpy.sum(dZ2, axis =0, keepdims=True) / m
+                
+                # Error propagated from output layer to hidden layer
+                dA1 = numpy.dot(dZ2, self.W2.T)
+                # Hidden layer gradient
+                dZ1 = dA1 * self.relu_derivative(self.Z1)
+                # Hidden layer weight gradient
+                dW1 = numpy.dot(X.T, dZ1) / m
+                # Hidden layer bias gradient
+                db1 = numpy.sum(dZ1, axis=0, keepdims= True) / m
+
+                #updating weights and biases
+                self.W2 += self.learning_rate * dW2
+                self.b2 += self.learning_rate * db2
+                self.W1 += self.learning_rate * dW1
+                self.b1 += self.learning_rate * db1
         
-                E = Y - X3 #Raw error
-        
-                dZ3 = E * (X3 * (1 - X3)) #Error multiplied by the sigmoid derivative results in the output gradient, calculates how much each output contributed to the total error
-                dW2 = numpy.dot(X2.T, dZ3) #error propagation to the weights of the hidden layer X2 = weights of the hidden layer, we use the transposed matrix so the multiplication is possible
-                db2 = numpy.sum(dZ3, axis=0, keepdims=True) #output bias gradient 
+        def train(self, X, Y, epochs):
+                for epoch in range(epochs):
+                        self.FowardPropagation(X)
+                        self.BackPropagation(X,Y)
 
-                #hidden layer propagation
-                dX2 = numpy.dot(dZ3, self.W2.T) # Error propagated from output layer to hidden layer
-                dZ2 = dX2 * (Z>0)  # hidden layer activation gradient (ReLU)
-                dW1 = numpy.dot(X.T, dZ2) # Input weights gradient
-                db1 = numpy.sum(dZ2, axis=0, keepdims= True) #hidden layer bias gradient
+                        # For each 1000 epochs, update and print the MSE
+                        if epoch %1000 == 0:
+                                loss = numpy.mean((Y - self.A2) ** 2)
+                                print(f"Epoch {epoch} - Loss: {loss:.4f}")
 
-                #descendant gradient - updating weights and biases
-                self.W2 -= alfa * dW2
-                self.b2 -= alfa * db2
-                self.W1 -= alfa * dW1
-                self.b1 -= alfa*db1
-
+        def predict(self, X):
+                output = self.FowardPropagation(X)
+                return numpy.round(output)
 
 
 
