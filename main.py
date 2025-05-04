@@ -6,7 +6,7 @@ args = sys.argv
 def train_logic_ports(problem, n_hidden, learning_rate, epochs):
     data = numpy.genfromtxt(f'./portas_logicas/problem{problem}.csv', delimiter=',', encoding='utf-8-sig')
     input = data[:, :2]
-    desired_output = data[:, 2] 
+    desired_output = data[:, 2].reshape(-1, 1)
 
     mlp = MLP(n_input=2, n_hidden=n_hidden, n_output=1, learning_rate=learning_rate)
     mlp.train(input, desired_output, epochs)
@@ -24,7 +24,7 @@ def main(args):
     problem = args[1] 
     epochs = int(args[2])
     n_hidden = int(args[3])
-    learning_rate = args[4]
+    learning_rate = float(args[4])
     if(problem == "AND" or problem == "OR" or problem == "XOR"):
         train_logic_ports(problem, n_hidden, learning_rate, epochs)
     elif(problem == "CHAR"):   
