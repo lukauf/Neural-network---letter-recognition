@@ -29,7 +29,18 @@ class MLP:
         @staticmethod
         def sigmoid_derivative(z):
                 return z * (1-z)
-
+        
+        # Hiperbolic tangent function is more recommended when we deal with logic ports with -1 and 1
+        # Since sigmoid never produces values next to -1 (values in [0,1])
+        @staticmethod
+        def hiperbolic_tan(z):
+                return (numpy.exp(z) - numpy.exp(-z))/(numpy.exp(z) + numpy.exp(-z))
+        
+        @staticmethod
+        def hiperbolic_tan_derivative(z):
+                k = MLP.hiperbolic_tan(z)
+                return 1-k**2
+        
         def FowardPropagation(self, X):
                 # Multiply X by W1 weights and sum the bias in the hidden layer
                 self.Z1 = numpy.dot(X, self.W1) + self.b1 #X(Ntx120) x W1(120x60) + b1 = Z(Ntx60)
@@ -38,7 +49,7 @@ class MLP:
                 # Multiply hidden layer "output" by W2 weights and sum the bias in the output layer
                 self.Z2 = numpy.dot(self.A1, self.W2) + self.b2#X2(Ntx60) x W2(60x26) = Z2(1x26)
                 # Apply sigmoid in the output
-                self.A2 = self.sigmoid(self.Z2)#X3(Ntx26), X3 has the values between 0 and 1, we will later get the biggest value to see which letter is it (each slot of the array is a reference to a letter of the alfabet)
+                self.A2 = self.hiperbolic_tan(self.Z2)#X3(Ntx26), X3 has the values between 0 and 1, we will later get the biggest value to see which letter is it (each slot of the array is a reference to a letter of the alfabet)
                 return self.A2
 
         # Adjust the weights based on error between the correct ouput (Y) and the neural network calculus output (self.A2)
@@ -49,7 +60,7 @@ class MLP:
                 # Output error
                 E = Y - self.A2 #Raw error
                 # Output layer gradient
-                dZ2 = E * self.sigmoid_derivative(self.A2)
+                dZ2 = E * self.hiperbolic_tan_derivative(self.A2)
                 # Output layer weight gradient
                 dW2 = numpy.dot(self.A1.T, dZ2) / m
                 # Output layer bias gradient 
