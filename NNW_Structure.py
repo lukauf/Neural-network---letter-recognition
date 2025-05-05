@@ -39,11 +39,20 @@ class MLP:
 
                 E = Y - output #Raw error
 
-                self.dZ3 = E * (output * (1 - output)) #Error multiplied by the sigmoid derivative results in the output gradient, calculates how much each output contributed to the total error
+                self.dZ3 = E * (output * (1 - output)) #Error multiplied by the sigmoid derivative results in the output gradient, calculates how much each output activation contributed to the total error
                 self.dW2 = numpy.dot(self.X2.T, self.dZ3) #error propagation to the weights of the hidden layer X2 = weights of the hidden layer, we use the transposed matrix so the multiplication is possible
                 db2 = numpy.sum(self.dZ3, axis=0, keepdims=True) #output bias error gradient, we sum the error of every output (each collumn)
                 self.dA1 = numpy.dot(self.dZ3, self.W2.T) #propagates the output error to the hidden layer weights
-                dZ1 = self.dA1 * (self.Z > 0)
+                dZ1 = self.dA1 * (self.Z > 0) #calculates the gradient of error (contribution of each hidden layer activation for the total error) of each activation of the hidden layer 
+                self.dW1 = numpy.dot(X.T, dz1)  #calculates the gradient of error (contribution of each input weight to hidden layer for total error) of each weight that connects the input and hidden layer 
+                db1 = numpy.sum(dz1, axis = 0, keepdims = True) calculates the gradient of error (contribution) of each bias of the hidden layer
+
+                #Updating weights and biases using the gradients, they are updated by adding at the weights and biases the product of the learning rate and their respective gradients
+                self.W1 += alfa * self.dW1 
+                self.b1 += alfa * db1
+                self.W2 += alfa * self.dW2 
+                self.b2 += alfa * db2
+                
 
 
 
