@@ -1,7 +1,7 @@
 import numpy
 
 class MLP:
-        def __init__(self, n_input, n_hidden, n_output): #120 input neurons, 60 (arbitrary number) neurons at hidden layer, and 26 output neurons, (26 letters/results)
+        def __init__(self, n_hidden, n_output = 26, n_input = 120): #120 input neurons, 60 (arbitrary number) neurons at hidden layer, and 26 output neurons, (26 letters/results)
 
                 self.W1 = numpy.random.randn(n_input, n_hidden) * 0.01 #weight matrix 120x60 input layer -> hidden layer
                 self.W2 = numpy.random.randn(n_hidden, n_output)  * 0.01 #weight matrix hidden layer -> output layer
@@ -52,6 +52,21 @@ class MLP:
                 self.b1 += alfa * db1
                 self.W2 += alfa * self.dW2 
                 self.b2 += alfa * db2
+
+        def train_mlp(model, X_train, Y_train, learning_rate, epochs, batch_size): #model = MLP class instance, X_train = training data, Y_train = training labels, learning_rate = alfa(backpropagation), epochs = number of times the entire dataset will be passed through the neural network, #batch_size = the number of samples to be used on the training (number of rows in X_train)
+                   num_samples = X_train.shape[0]
+                   for epoch in range(epochs):
+                           indices = numpy.arange(num_samples) #array of indices that correspond to the rows of the training data
+                           numpy.random.shuffle(indices) #rearranges the elements of the indices array in a random order, so the model does not learn patterns based on the order of the data
+                           X_train = X_train[indices]   #the rows of X_train are rearranged in the same random order as the indices array
+                           Y_train = Y_train[indices]   ##the rows of Y_train are rearranged in the same random order as the indices array
+                           
+                           for start in range(0, num_samples, batch_size):
+                                    end = start + batch_size
+                                    X_batch = X_train[start:end]
+                                    Y_batch = Y_train[start:end]
+
+                        
                 
 
 
