@@ -60,7 +60,7 @@ class MLP:
                 # Output error
                 E = Y - self.A2 #Raw error
                 # Output layer gradient
-                dZ2 = E * self.hiperbolic_tan_derivative(self.A2)
+                dZ2 = E * self.hiperbolic_tan_derivative(self.Z2)
                 # Output layer weight gradient
                 dW2 = numpy.dot(self.A1.T, dZ2) / m
                 # Output layer bias gradient 
@@ -81,19 +81,41 @@ class MLP:
                 self.W1 += self.learning_rate * dW1
                 self.b1 += self.learning_rate * db1
         
-        def train(self, X, Y, epochs):
+        def train(self, X, Y, epochs, batch_size):
+                
+                num_samples = X.shape[0]
+
                 for epoch in range(epochs):
-                        self.FowardPropagation(X)
-                        self.BackPropagation(X,Y)
+                        #array of indices that correspond to the rows of the training data
+                        idxs = numpy.arange(num_samples)
+                        #rearranges the elements of the indices array in a random order, so the model does not learn patterns based on the order of the data
+                        numpy.random.shuffle(idxs)
+                        #the rows of X are rearranged in the same random order as the indices array
+                        X = X[idxs]
+                        #the rows of Y are rearranged in the same random order as the indices array
+                        Y= Y[idxs]
+
+                        for start in range(0, num_samples,batch_size):
+                                end = start + batch_size
+                                X_batch = X[start:end]
+                                Y_batch = Y[start:end]
+                                
+                                self.FowardPropagation(X_batch)
+                                self.BackPropagation(X_batch,Y_batch)
 
                         # For each 1000 epochs, update and print the MSE
                         if epoch %1000 == 0:
-                                loss = numpy.mean((Y - self.A2) ** 2)
-                                print(f"Época {epoch} - MSE: {loss:.4f}")
+                                predictions = self.predict(X)
+                                # loss = numpy.mean((Y - self.A2) ** 2)
+                                #I'll change MSE to accuracy but I'll let it here for now
+                                correct = numpy.sum(predictions == Y)
+                                accuracy = correct / num_samples
+                                print(f"Época {epoch} - Acc: {accuracy * 100:.6f}%")
 
         def predict(self, X):
                 output = self.FowardPropagation(X)
-                return numpy.round(output)
+                #Values greater or equal than zeros are 1
+                return numpy.where(output >= 0, 1, -1)
 
 
 
