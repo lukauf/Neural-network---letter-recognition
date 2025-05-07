@@ -1,7 +1,7 @@
 import numpy
 
 class MLP:
-        def __init__(self, n_hidden, n_output = 26, n_input = 120): #120 input neurons, 60 (arbitrary number) neurons at hidden layer, and 26 output neurons, (26 letters/results)
+        def __init__(self, n_input, n_hidden, n_output): #120 input neurons, 60 (arbitrary number) neurons at hidden layer, and 26 output neurons, (26 letters/results)
 
                 self.W1 = numpy.random.randn(n_input, n_hidden) * 0.01 #weight matrix 120x60 input layer -> hidden layer
                 self.W2 = numpy.random.randn(n_hidden, n_output)  * 0.01 #weight matrix hidden layer -> output layer
