@@ -84,7 +84,7 @@ class MLP:
         def train(self, X, Y, epochs, batch_size):
                 
                 num_samples = X.shape[0]
-
+                epoch_factor = epochs//10
                 for epoch in range(epochs):
                         #array of indices that correspond to the rows of the training data
                         idxs = numpy.arange(num_samples)
@@ -102,9 +102,9 @@ class MLP:
                                 
                                 self.FowardPropagation(X_batch)
                                 self.BackPropagation(X_batch,Y_batch)
-
+                        
                         # For each 1000 epochs, update and print the MSE
-                        if epoch %1000 == 0:
+                        if epoch %epoch_factor == 0:
                                 predictions = self.predict(X)
                                 # loss = numpy.mean((Y - self.A2) ** 2)
                                 #I'll change MSE to accuracy but I'll let it here for now
@@ -115,7 +115,7 @@ class MLP:
         def predict(self, X):
                 output = self.FowardPropagation(X)
                 #Values greater or equal than zeros are 1
-                return numpy.where(output >= 0, 1, -1)
+                return numpy.where(output > 0, 1, -1)
 
 
 
