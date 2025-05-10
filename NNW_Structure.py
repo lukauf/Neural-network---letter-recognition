@@ -62,9 +62,9 @@ class MLP:
                 # Output layer gradient
                 dZ2 = E * self.hiperbolic_tan_derivative(self.Z2)
                 # Output layer weight gradient
-                dW2 = numpy.dot(self.A1.T, dZ2) / m
+                dW2 = numpy.dot(self.A1.T, dZ2)
                 # Output layer bias gradient 
-                db2 = numpy.sum(dZ2, axis =0, keepdims=True) / m
+                db2 = numpy.sum(dZ2, axis =0, keepdims=True)
                 
                 # Error propagated from output layer to hidden layer
                 dA1 = numpy.dot(dZ2, self.W2.T)
@@ -110,7 +110,7 @@ class MLP:
                                 #I'll change MSE to accuracy but I'll let it here for now
                                 correct = numpy.sum(predictions == Y)
                                 accuracy = correct / num_samples
-                                print(f"Época {epoch} - Acc: {accuracy * 100:.6f}% - MSE: {loss:.4f}")
+                                print(f"Época {epoch} - Acc: {accuracy * 100:.2f}% - MSE: {loss:.4f}")
 
         def predict(self, X):
                 output = self.FowardPropagation(X)
