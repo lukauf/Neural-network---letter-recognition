@@ -106,19 +106,13 @@ class MLP:
                         # For each 1000 epochs, update and print the MSE
                         if epoch %epoch_factor == 0:
                                 predictions = self.predict(X)
-                                # loss = numpy.mean((Y - self.A2) ** 2)
+                                loss = numpy.mean((Y - self.A2) ** 2)
                                 #I'll change MSE to accuracy but I'll let it here for now
                                 correct = numpy.sum(predictions == Y)
                                 accuracy = correct / num_samples
-                                print(f"Época {epoch} - Acc: {accuracy * 100:.6f}%")
+                                print(f"Época {epoch} - Acc: {accuracy * 100:.6f}% - MSE: {loss:.4f}")
 
         def predict(self, X):
                 output = self.FowardPropagation(X)
                 #Values greater or equal than zeros are 1
                 return numpy.where(output > 0, 1, -1)
-
-
-
-
-
-

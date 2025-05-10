@@ -53,7 +53,12 @@ def train_char_recognition(n_hidden, learning_rate, epochs, batch_size):
     indices = [ord(letter) - ord('A') for letter in letters]
 
     # Each line of Y(expected output) will represent a one hot coded representation of a letter
+    
+    ## Here I have a problem that I'm trying to solve
+    # Y = numpy.zeros((len(indices), 26)): Array full of 0s. The training uses -1s ans 1 instead of 0s and 1s. The Acc and MSE have good values but it shows as never predicted correctly
+    # Y = numpy.full((len(indices), 26), -1): Array full of -1s. The predicted values are most of the time correct but the Acc and MSE values are really strange
     Y = numpy.zeros((len(indices), 26))
+    
     # Fills each one hot coded line with 1 on the right spot to represent the corresponding letter 
     for i, idx in enumerate(indices): 
         Y[i, idx] = 1 
@@ -68,8 +73,8 @@ def train_char_recognition(n_hidden, learning_rate, epochs, batch_size):
         predicted_index = numpy.argmax(output)
         # Actual letter converted from ASCII to a char
         predicted_letter = chr(predicted_index + ord('A'))
-
-    print(f"Letra prevsita: {predicted_letter}")
+        print(f"Saída esperada: {letters[i]} - Saída prevista: {predicted_letter}")
+    
 
 def main(args):
     if len(args) != 6:
