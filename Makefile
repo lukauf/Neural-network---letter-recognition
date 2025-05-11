@@ -1,22 +1,24 @@
 PYTHON=python3
+LETTER = NNW_Letters
+GATES = NNW_Logic_Gates
 
 install:
 	$(PYTHON) -m pip install -r requirements.txt
 
 letters:
-	$(PYTHON) NNW_Letters.py
+	$(PYTHON) $(LETTER).py
 
 letters-cross-validation:
-	$(PYTHON) NNW_Letters_Cross_Validation.py
+	$(PYTHON) $(LETTER)_Cross_Validation.py
 
 letters-early-stopping:
-	$(PYTHON) NNW_Letters_Early_Stopping.py
+	$(PYTHON) $(LETTER)_Early_Stopping.py
 
 logic-gates-AND:
-	$(PYTHON) NNW_Logic_Gates.py AND
+	$(PYTHON) $(GATES).py AND
 
 logic-gates-OR:
-	$(PYTHON) NNW_Logic_Gates.py OR
+	$(PYTHON) $(GATES).py OR
 
 logic-gates-XOR:
-	$(PYTHON) NNW_Logic_Gates.py XOR
+	$(PYTHON) $(GATES).py XOR
