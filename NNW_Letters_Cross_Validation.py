@@ -13,7 +13,7 @@ batch_size = 32
 k_folds = 5
 
 X_linhas = []
-with open("X.txt", "r") as f:
+with open("./char_recognition/X.txt", "r") as f:
     for line in f:
         # Remove spaces, separates by "," and remove empty string
         values = [v.strip() for v in line.strip().split(",") if v.strip() != ""]
@@ -25,7 +25,7 @@ with open("X.txt", "r") as f:
 
 X = numpy.array(X_linhas)
 
-with open("Y_letra.txt", "r") as f:
+with open("./char_recognition/Y_letra.txt", "r") as f:
     letters = [line.strip() for line in f]
 
 indices = [ord(letter) - ord('A') for letter in letters]  #this function uses ASCII/Unicode, so we don't need to set the index manualy
