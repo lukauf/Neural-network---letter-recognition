@@ -1,8 +1,9 @@
 import numpy
 from NNW_Structure import MLP
+from confusion_matrix import create_confusion_matrix
 
 # File to store the outputs 
-file = open("./outputs/NNW_Letters_output.txt","w")
+file = open("./outputs/predictions/NNW_Letters_output.txt","w")
 
 n_input = 120  #120 pixel images
 n_hidden = 250  #arbitrary
@@ -10,6 +11,12 @@ n_output = 26  #26 possible outputs to be interpreted
 learning_rate = 0.001
 epochs = 120
 batch_size = 32
+
+problem = "NNW_Letters"
+
+# Confusion matrix
+y_true = []
+y_pred = []
 
 #preparing the data:
 
@@ -56,6 +63,11 @@ for x_sample, y_expected in zip(X_test, Y_test):
     output = Nnw.forwardpass(x_sample.reshape(1, -1))
     pred = numpy.argmax(output)
     real = numpy.argmax(y_expected)
+
+    # Save the values for confusion matrix
+    y_pred.append(pred)
+    y_true.append(real)
+
     pred_letter = chr(pred + ord('A'))#converts the indice to letter
     real_letter = chr(real + ord('A'))#converts the indice to letter
 
@@ -72,3 +84,5 @@ print(f"Acurácia: {scores}/{len(X_test)} → {scores / len(X_test):.2%}")
 file.write(f"Acurácia: {scores}/{len(X_test)} → {scores / len(X_test):.2%}\n")
 
 file.close()
+
+create_confusion_matrix(problem, y_true, y_pred)

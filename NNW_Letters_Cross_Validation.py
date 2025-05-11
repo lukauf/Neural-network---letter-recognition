@@ -1,8 +1,9 @@
-import numpy as numpy
+import numpy
 from NNW_Structure import MLP
+from confusion_matrix import create_confusion_matrix
 
 # File to store the outputs 
-file = open("./outputs/NNW_Letters_Cross_Validation_output.txt","w")
+file = open("./outputs/predictions/NNW_Letters_Cross_Validation_output.txt","w")
 
 # Parâmetros da MLP
 n_input = 120
@@ -11,6 +12,12 @@ n_output = 26
 learning_rate = 0.001
 epochs = 120
 batch_size = 32
+
+problem = "NNW_Letters_Cross_Validation"
+
+# Confusion matrix
+y_true = []
+y_pred = []
 
 # Folds
 k_folds = 5
@@ -61,6 +68,10 @@ for k in range(k_folds):
         pred = numpy.argmax(output) 
         real = numpy.argmax(y_expected)
 
+        # Save the values for confusion matrix
+        y_pred.append(pred)
+        y_true.append(real)
+        
         if pred == real:
             corrects += 1
 
@@ -79,3 +90,5 @@ print(f"\nMean accuraccy: {numpy.mean(scores):.2%}")
 file.write(f"\nMean accuraccy: {numpy.mean(scores):.2%}\n")
 
 file.close()
+
+create_confusion_matrix(problem, y_true, y_pred)

@@ -1,8 +1,9 @@
 import numpy
 from NNW_Structure import MLP
+from confusion_matrix import create_confusion_matrix
 
 # File to store the outputs 
-file = open("./outputs/NNW_Letters_Early_Stopping_output.txt","w")
+file = open("./outputs/predictions/NNW_Letters_Early_Stopping_output.txt","w")
 
 n_input = 120  #120 pixel images
 n_hidden = 250  #arbitrary
@@ -10,6 +11,12 @@ n_output = 26  #26 possible outputs to be interpreted
 learning_rate = 0.001
 epochs = 200
 batch_size = 32
+
+problem = "NNW_Letters_Early_Stopping"
+
+# Confusion matrix
+y_true = []
+y_pred = []
 
 # patience
 patience = 10
@@ -104,4 +111,18 @@ if best_weights:
     Nnw.W2 = best_weights['W2']
     Nnw.b2 = best_weights['b2']
 
+for x_sample, y_expected in zip(X_test, Y_test):
+    output = Nnw.forwardpass(x_sample.reshape(1, -1))
+    pred = numpy.argmax(output)
+    real = numpy.argmax(y_expected)
+
+    # Save the values for confusion matrix
+    y_pred.append(pred)
+    y_true.append(real)
+
+    pred_letter = chr(pred + ord('A'))#converts the indice to letter
+    real_letter = chr(real + ord('A'))#converts the indice to letter
+
 file.close()
+
+create_confusion_matrix(problem, y_true, y_pred)
