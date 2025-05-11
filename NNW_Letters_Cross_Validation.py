@@ -1,6 +1,9 @@
 import numpy as numpy
 from NNW_Structure import MLP
 
+# File to store the outputs 
+file = open("./outputs/NNW_Letters_Cross_Validation_output.txt","w")
+
 # Parâmetros da MLP
 n_input = 120
 n_hidden = 250
@@ -42,6 +45,7 @@ scores = []
 
 for k in range(k_folds):
     print(f"Fold {k+1}:")
+    file.write(f"Fold {k+1}:\n")
     val_idxs = sample_indices[k * folds_size: (k + 1) * folds_size]
     train_idxs = numpy.setdiff1d(sample_indices, val_idxs)
 
@@ -64,10 +68,14 @@ for k in range(k_folds):
         real_letter = chr(real + ord('A')) #converts the indice to letter
         status = "CORRECT" if pred == real else "WRONG"
         print(f"Predicted = {pred_letter} | Expected = {real_letter} → {status}")
-
+        file.write(f"Predicted = {pred_letter} | Expected = {real_letter} → {status}\n")
     acc = corrects / len(X_val)
     print(f"Fold {k+1} Acc: {corrects}/{len(X_val)} → {acc:.2%}")
+    file.write(f"Fold {k+1} Acc: {corrects}/{len(X_val)} → {acc:.2%}\n")
     scores.append(acc)
 
 # Final mean
 print(f"\nMean accuraccy: {numpy.mean(scores):.2%}")
+file.write(f"\nMean accuraccy: {numpy.mean(scores):.2%}\n")
+
+file.close()

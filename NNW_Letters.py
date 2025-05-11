@@ -1,6 +1,9 @@
 import numpy
 from NNW_Structure import MLP
 
+# File to store the outputs 
+file = open("./outputs/NNW_Letters_output.txt","w")
+
 n_input = 120  #120 pixel images
 n_hidden = 250  #arbitrary
 n_output = 26  #26 possible outputs to be interpreted
@@ -58,10 +61,14 @@ for x_sample, y_expected in zip(X_test, Y_test):
 
     if pred == real:
         print("Predicted = ", pred_letter, "Expected = ", real_letter, "CORRECT")
+        file.write(f"Predicted = {pred_letter} Expected = {real_letter} CORRECT\n")
     else:
         print("Predicted = ", pred_letter, "Expected = ", real_letter, "WRONG")
-
+        file.write(f"Predicted = {pred_letter} Expected = {real_letter} WRONG\n")
     if pred == real:
         scores += 1
 
 print(f"Acurácia: {scores}/{len(X_test)} → {scores / len(X_test):.2%}")
+file.write(f"Acurácia: {scores}/{len(X_test)} → {scores / len(X_test):.2%}\n")
+
+file.close()
