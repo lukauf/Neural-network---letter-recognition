@@ -86,7 +86,9 @@ for epoch in range(epochs):
         print(f"No best results. Patience: {patience_counter}/{patience}")
 
         if patience_counter >= patience:
-            print("Early Stopping!")
+            print("==============================================================")
+            print(f"\tEarly Stopping! - Best value loss: {best_val_loss:6f}")
+            print("==============================================================")
             break
 if best_weights:
     Nnw.W1 = best_weights['W1']
