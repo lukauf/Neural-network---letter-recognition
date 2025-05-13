@@ -54,7 +54,7 @@ for k in range(k_folds):
     corrects = 0
     for x_sample, y_expected in zip(X_val, Y_val):
         output = nnw.forwardpass(x_sample.reshape(1, -1))
-        pred = numpy.argmax(output) 
+        pred = numpy.argmax(output)
         real = numpy.argmax(y_expected)
 
         if pred == real:

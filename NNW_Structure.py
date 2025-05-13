@@ -78,4 +78,3 @@ class MLP:
                                 X_batch = X_train[start:end]
                                 Y_batch = Y_train[start:end]
                                 self.BackPropagation(X_batch, Y_batch, learning_rate)
-                     
