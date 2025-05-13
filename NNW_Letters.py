@@ -5,7 +5,7 @@ n_input = 120  # 120 pixel images
 n_hidden = 200  # arbitrary
 n_output = 26  # 26 possible outputs
 learning_rate = 0.0009
-epochs = 120
+epochs = 170
 batch_size = 32
 N_tests = 10  # number of tests to use for final mean calculation
 
@@ -80,5 +80,5 @@ def mean_value(num_tests):
 
 # Chamada atualizada:
 final_mean, final_variance = mean_value(N_tests)
-print(f"Final Mean: {final_mean:.4f}")
+print(f"Final Mean: {final_mean * 100:.0f}%")
 print(f"Variance: {final_variance:.4f}")

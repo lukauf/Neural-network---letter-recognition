@@ -38,10 +38,19 @@ class MLP:
         def hiperbolic_tan_derivative(z):
                 k = MLP.hiperbolic_tan(z)
                 return 1 - k**2
+        @staticmethod
+        def swish(z):
+                return z / (1 + numpy.exp(-z))  # ou z * sigmoid(z)
+
+        @staticmethod
+        def swish_derivative(z):
+                sigmoid_z = 1 / (1 + numpy.exp(-z))
+                return sigmoid_z + z * sigmoid_z * (1 - sigmoid_z)
+
 
         def forwardpass(self, X):
                 self.Z = numpy.dot(X, self.W1) + self.b1 #X(Ntx120) x W1(120x60) + b1 = Z(Ntx60)
-                self.X2 = self.relu(self.Z)#X2(NtX60) the function relu is applied to every value of the array, so we get an array which every value is the return of this function that was applied on each value of the Z array
+                self.X2 = self.swish(self.Z)#X2(NtX60) the function relu is applied to every value of the array, so we get an array which every value is the return of this function that was applied on each value of the Z array
                 self.Z2 = numpy.dot(self.X2, self.W2) + self.b2 #X2(Ntx60) x W2(60x26) + b2 = Z2(1x26)
                 self.X3 = self.hiperbolic_tan(self.Z2)#X3(Ntx26), X3 has the values between -1 and 1, we will later get the biggest value to see which letter is it (each slot of the array is a reference to a letter of the alfabet)
                 return self.X3
@@ -55,7 +64,7 @@ class MLP:
                 self.dW2 = numpy.dot(self.X2.T, self.dZ3) #error propagation to the weights of the hidden layer X2 = weights of the hidden layer, we use the transposed matrix so the multiplication is possible
                 db2 = numpy.sum(self.dZ3, axis=0, keepdims=True) #output bias error gradient, we sum the error of every output (each collumn)
                 self.dA1 = numpy.dot(self.dZ3, self.W2.T) #propagates the output error to the hidden layer weights
-                dZ1 = self.dA1 * self.relu_derivative(self.Z) #calculates the gradient of error (contribution of each hidden layer activation for the total error) of each activation of the hidden layer
+                dZ1 = self.dA1 * self.swish_derivative(self.Z) #calculates the gradient of error (contribution of each hidden layer activation for the total error) of each activation of the hidden layer
                 self.dW1 = numpy.dot(X.T, dZ1)  #calculates the gradient of error (contribution of each input weight to hidden layer for total error) of each weight that connects the input and hidden layer
                 db1 = numpy.sum(dZ1, axis = 0, keepdims = True) #calculates the gradient of error (contribution) of each bias of the hidden layer
 
