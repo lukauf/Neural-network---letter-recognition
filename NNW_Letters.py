@@ -5,7 +5,7 @@ n_input = 120  # 120 pixel images
 n_hidden = 200  # arbitrary
 n_output = 26  # 26 possible outputs
 learning_rate = 0.0009
-epochs = 180
+epochs = 170
 batch_size = 32
 N_tests = 10  # number of tests to use for final mean calculation
 
