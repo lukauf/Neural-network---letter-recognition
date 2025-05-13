@@ -1,5 +1,9 @@
-import numpy as numpy
+import numpy
 from NNW_Structure import MLP
+from confusion_matrix import create_confusion_matrix
+
+# File to store the outputs 
+file = open("./outputs/predictions/NNW_Letters_Cross_Validation_output.txt","w")
 
 # Parâmetros da MLP
 n_input = 120
@@ -8,6 +12,12 @@ n_output = 26
 learning_rate = 0.001
 epochs = 120
 batch_size = 32
+
+problem = "NNW_Letters_Cross_Validation"
+
+# Confusion matrix
+y_true = []
+y_pred = []
 
 # Folds
 k_folds = 5
@@ -42,6 +52,7 @@ scores = []
 
 for k in range(k_folds):
     print(f"Fold {k+1}:")
+    file.write(f"Fold {k+1}:\n")
     val_idxs = sample_indices[k * folds_size: (k + 1) * folds_size]
     train_idxs = numpy.setdiff1d(sample_indices, val_idxs)
 
@@ -54,9 +65,13 @@ for k in range(k_folds):
     corrects = 0
     for x_sample, y_expected in zip(X_val, Y_val):
         output = nnw.forwardpass(x_sample.reshape(1, -1))
-        pred = numpy.argmax(output)
+        pred = numpy.argmax(output) 
         real = numpy.argmax(y_expected)
 
+        # Save the values for confusion matrix
+        y_pred.append(pred)
+        y_true.append(real)
+        
         if pred == real:
             corrects += 1
 
@@ -64,10 +79,16 @@ for k in range(k_folds):
         real_letter = chr(real + ord('A')) #converts the indice to letter
         status = "CORRECT" if pred == real else "WRONG"
         print(f"Predicted = {pred_letter} | Expected = {real_letter} → {status}")
-
+        file.write(f"Predicted = {pred_letter} | Expected = {real_letter} → {status}\n")
     acc = corrects / len(X_val)
     print(f"Fold {k+1} Acc: {corrects}/{len(X_val)} → {acc:.2%}")
+    file.write(f"Fold {k+1} Acc: {corrects}/{len(X_val)} → {acc:.2%}\n")
     scores.append(acc)
 
 # Final mean
 print(f"\nMean accuraccy: {numpy.mean(scores):.2%}")
+file.write(f"\nMean accuraccy: {numpy.mean(scores):.2%}\n")
+
+file.close()
+
+create_confusion_matrix(problem, y_true, y_pred)

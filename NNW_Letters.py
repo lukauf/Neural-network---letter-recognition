@@ -1,5 +1,9 @@
 import numpy
 from NNW_Structure import MLP
+from confusion_matrix import create_confusion_matrix
+
+# File to store the outputs 
+file = open("./outputs/predictions/NNW_Letters_Early_Stopping_output.txt","w")
 
 n_input = 120  # 120 pixel images
 n_hidden = 200  # arbitrary
@@ -7,7 +11,13 @@ n_output = 26  # 26 possible outputs
 learning_rate = 0.0009
 epochs = 170
 batch_size = 32
-N_tests = 10  # number of tests to use for final mean calculation
+N_tests = 3  # number of tests to use for final mean calculation
+
+problem = "NNW_Letters"
+
+# Confusion Matrix
+y_true = []
+y_pred = []
 
 # Preparing the data:
 X_linhas = []
@@ -49,17 +59,25 @@ def training_and_results():
         output = Nnw.forwardpass(x_sample.reshape(1, -1))
         pred = numpy.argmax(output)
         real = numpy.argmax(y_expected)
+
+        # Save the values for confusion matrix
+        y_pred.append(pred)
+        y_true.append(real)
+        
         pred_letter = chr(pred + ord('A'))
         real_letter = chr(real + ord('A'))
 
         if pred == real:
             print(f"Predicted = {pred_letter} Expected = {real_letter} CORRECT")
+            file.write(f"Predicted = {pred_letter} Expected = {real_letter} CORRECT\n")
             scores += 1
         else:
             print(f"Predicted = {pred_letter} Expected = {real_letter} WRONG")
+            file.write(f"Predicted = {pred_letter} Expected = {real_letter} CORRECT\n")
 
     accuracy = scores / len(X_test)
     print(f"Accuracy: {accuracy:.2f}")
+    file.write(f"Accuracy: {accuracy:.2f}\n")
     return accuracy
 
 def mean_value(num_tests):
@@ -81,4 +99,10 @@ def mean_value(num_tests):
 # Chamada atualizada:
 final_mean, final_variance = mean_value(N_tests)
 print(f"Final Mean: {final_mean * 100:.0f}%")
+file.write(f"Final Mean: {final_mean * 100:.0f}%\n")
 print(f"Variance: {final_variance:.4f}")
+file.write(f"Variance: {final_variance:.4f}\n")
+
+file.close()
+
+create_confusion_matrix(problem,y_true,y_pred)
