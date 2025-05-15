@@ -9,8 +9,8 @@ file = open("./outputs/predictions/NNW_Letters_Cross_Validation_output.txt","w")
 n_input = 120
 n_hidden = 250
 n_output = 26
-learning_rate = 0.001
-epochs = 120
+learning_rate = 0.0009
+epochs = 150
 batch_size = 32
 
 problem = "NNW_Letters_Cross_Validation"

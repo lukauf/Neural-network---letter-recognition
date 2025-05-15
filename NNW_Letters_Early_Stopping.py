@@ -8,7 +8,7 @@ file = open("./outputs/predictions/NNW_Letters_Early_Stopping_output.txt","w")
 n_input = 120  #120 pixel images
 n_hidden = 250  #arbitrary
 n_output = 26  #26 possible outputs to be interpreted
-learning_rate = 0.001
+learning_rate = 0.0009
 epochs = 200
 batch_size = 32
 

@@ -3,23 +3,23 @@ from NNW_Structure import MLP
 from confusion_matrix import create_confusion_matrix
 
 # File to store the outputs 
-file = open("./outputs/predictions/NNW_Letters_Early_Stopping_output.txt","w")
+file = open("./outputs/predictions/NNW_Letters_Early_Stopping_output.txt", "w")
 
-n_input = 120  # 120 pixel images
-n_hidden = 200  # arbitrary
-n_output = 26  # 26 possible outputs
-learning_rate = 0.0009
-epochs = 170
+n_input = 120  # 120 pixels per image (input layer size)
+n_hidden = 150  # number of neurons in the hidden layer (chosen empirically)
+n_output = 26  # 26 possible output classes (letters A-Z)
+learning_rate = 0.001
+epochs = 120
 batch_size = 32
-N_tests = 3  # number of tests to use for final mean calculation
+N_tests = 10  # number of independent training tests to compute mean accuracy
 
 problem = "NNW_Letters"
 
-# Confusion Matrix
+# Lists to store true and predicted labels for the confusion matrix
 y_true = []
 y_pred = []
 
-# Preparing the data:
+# Preparing the input data:
 X_linhas = []
 
 with open("./char_recognition/X.txt", "r") as f:
@@ -34,20 +34,25 @@ with open("./char_recognition/X.txt", "r") as f:
 
 X = numpy.array(X_linhas)
 
+# Preparing the labels
 with open("./char_recognition/Y_letra.txt", "r") as f:
     letters = [line.strip() for line in f]
 
+# Convert letters (A-Z) to indices (0-25)
 indices = [ord(letter) - ord('A') for letter in letters]
 Y = numpy.zeros((len(indices), 26))
 
+# One-hot encoding
 for i, idx in enumerate(indices):
     Y[i, idx] = 1
 
-X_train = X[:-130]  # All lines besides last 130
+# Split data into training and testing sets
+X_train = X[:-130]  # All rows except the last 130 for training
 Y_train = Y[:-130]
-X_test = X[-130:]  # Just last 130 lines
+X_test = X[-130:]  # Last 130 rows for testing
 Y_test = Y[-130:]
 
+# Create neural network
 Nnw = MLP(n_input, n_hidden, n_output)
 
 def training_and_results():
@@ -60,10 +65,10 @@ def training_and_results():
         pred = numpy.argmax(output)
         real = numpy.argmax(y_expected)
 
-        # Save the values for confusion matrix
+        # Save predictions for the confusion matrix
         y_pred.append(pred)
         y_true.append(real)
-        
+
         pred_letter = chr(pred + ord('A'))
         real_letter = chr(real + ord('A'))
 
@@ -73,15 +78,16 @@ def training_and_results():
             scores += 1
         else:
             print(f"Predicted = {pred_letter} Expected = {real_letter} WRONG")
-            file.write(f"Predicted = {pred_letter} Expected = {real_letter} CORRECT\n")
+            file.write(f"Predicted = {pred_letter} Expected = {real_letter} WRONG\n")
 
+    # Calculate accuracy for this test
     accuracy = scores / len(X_test)
     print(f"Accuracy: {accuracy:.2f}")
     file.write(f"Accuracy: {accuracy:.2f}\n")
     return accuracy
 
 def mean_value(num_tests):
-    accuracies = []  # Armazenará todas as acurácias individuais
+    accuracies = []  # Stores individual test accuracies
     total_accuracy = 0.0
 
     for _ in range(num_tests):
@@ -91,12 +97,12 @@ def mean_value(num_tests):
 
     mean = total_accuracy / num_tests
 
-    # Cálculo da variância (média dos quadrados das diferenças em relação à média)
-    variance = numpy.var(accuracies, ddof=1)  # ddof=1 para variância amostral
+    # Variance calculation (sample variance with ddof=1)
+    variance = numpy.var(accuracies, ddof=1)
 
-    return mean, variance  # Retorna tanto a média quanto a variância
+    return mean, variance  # Returns both mean accuracy and variance
 
-# Chamada atualizada:
+# Final execution
 final_mean, final_variance = mean_value(N_tests)
 print(f"Final Mean: {final_mean * 100:.0f}%")
 file.write(f"Final Mean: {final_mean * 100:.0f}%\n")
@@ -105,4 +111,5 @@ file.write(f"Variance: {final_variance:.4f}\n")
 
 file.close()
 
-create_confusion_matrix(problem,y_true,y_pred)
+# Generate and save confusion matrix + classification report
+create_confusion_matrix(problem, y_true, y_pred)
