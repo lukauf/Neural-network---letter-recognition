@@ -58,7 +58,8 @@ class MLP:
                 output = self.forwardpass(X)
 
                 E = Y - output  # Raw error
-
+                self.print_error(E)
+                
                 self.dZ3 = E * self.hiperbolic_tan_derivative(self.Z2)  # Error multiplied by the tanh derivative results in the output gradient, calculates how much each output activation contributed to the total error
                 self.dW2 = numpy.dot(self.X2.T, self.dZ3)  # error propagation to the weights of the output layer, we use the transposed matrix so the multiplication is possible
                 db2 = numpy.sum(self.dZ3, axis=0, keepdims=True)  # output bias error gradient, we sum the error of every output (each column)
@@ -68,6 +69,7 @@ class MLP:
                 db1 = numpy.sum(dZ1, axis=0, keepdims=True)  # calculates the gradient of error of each bias of the hidden layer
 
                 # Updating weights and biases using the gradients, they are updated by adding to the weights and biases the product of the learning rate and their respective gradients
+                # Convergência dos pesos
                 self.W1 += alfa * self.dW1
                 self.b1 += alfa * db1
                 self.W2 += alfa * self.dW2
@@ -86,3 +88,8 @@ class MLP:
                                 X_batch = X_train[start:end]
                                 Y_batch = Y_train[start:end]
                                 self.BackPropagation(X_batch, Y_batch, learning_rate)
+
+        def print_error(self, E):
+                error_file = open("./outputs/error.txt", "w")
+                error_file.write("=== ERRO DA CAMADA DE SAÍDA ===\n")
+                error_file.write(f"E: {str(E)}\n")

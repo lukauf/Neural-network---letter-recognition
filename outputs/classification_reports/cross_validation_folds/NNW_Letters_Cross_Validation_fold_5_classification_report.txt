@@ -1,0 +1,40 @@
+              precision    recall  f1-score   support
+
+           A       0.64      0.70      0.67        10
+           B       0.54      0.70      0.61        10
+           C       0.78      0.70      0.74        10
+           D       1.00      0.60      0.75        10
+           E       1.00      0.40      0.57        10
+           F       0.89      0.80      0.84        10
+           G       0.88      0.70      0.78        10
+           H       0.88      0.70      0.78        10
+           I       0.56      1.00      0.71        10
+           J       0.67      0.60      0.63        10
+           K       0.88      0.70      0.78        10
+           L       0.58      0.70      0.64        10
+           M       0.77      1.00      0.87        10
+           N       1.00      0.70      0.82        10
+           O       0.83      0.50      0.62        10
+           P       0.89      0.80      0.84        10
+           Q       0.64      0.90      0.75        10
+           R       0.70      0.70      0.70        10
+           S       0.56      0.90      0.69        10
+           T       0.82      0.90      0.86        10
+           U       1.00      0.73      0.84        11
+           V       0.89      0.73      0.80        11
+           W       0.69      1.00      0.81        11
+           X       0.90      0.82      0.86        11
+           Y       0.91      0.91      0.91        11
+           Z       0.90      0.90      0.90        10
+
+    accuracy                           0.76       265
+   macro avg       0.80      0.76      0.76       265
+weighted avg       0.80      0.76      0.76       265
+
+
+Precision: How many times the prediction was right (for each letter)
+Recall: How many times the model was right when the real letter was this one (for each letter)
+F1-Score: Harmonic mean between precision and recall
+Support: Real samples (of each letter)
+Macro Average: Metrics simple mean (all letters have the same weight)
+Weighted Average: mean based on letter support

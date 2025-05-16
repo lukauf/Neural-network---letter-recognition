@@ -1,9 +1,14 @@
 import numpy
 from NNW_Structure import MLP
-from confusion_matrix import create_confusion_matrix
+from plots import create_confusion_matrix
+
+problem = "NNW_Letters_Early_Stopping"
+
+# Abrir arquivo para registrar as informações
+info_file = open(f"./outputs/general_information/{problem}_Training_Weights.txt", "w")
 
 # File to store the outputs 
-file = open("./outputs/predictions/NNW_Letters_Early_Stopping_output.txt","w")
+file = open(f"./outputs/predictions/{problem}.txt", "w")
 
 n_input = 120  #120 pixel images
 n_hidden = 250  #arbitrary
@@ -12,7 +17,6 @@ learning_rate = 0.0009
 epochs = 200
 batch_size = 32
 
-problem = "NNW_Letters_Early_Stopping"
 
 # Confusion matrix
 y_true = []
@@ -74,6 +78,11 @@ Nnw = MLP(n_input, n_hidden, n_output)
 for epoch in range(epochs):
     Nnw.train_mlp(X_train, Y_train, learning_rate, 1, batch_size)
 
+    if epoch == 0:
+            info_file.write("=== PESOS INICIAIS ===\n")
+            info_file.write("W1:\n" + str(Nnw.W1) + "\n")
+            info_file.write("W2:\n" + str(Nnw.W2) + "\n\n")
+
     val_outputs = Nnw.forwardpass(X_val)
 
     # MSE
@@ -98,6 +107,10 @@ for epoch in range(epochs):
         file.write(f"No best results. Patience: {patience_counter}/{patience}\n")
 
         if patience_counter >= patience:
+            info_file.write("=== PESOS FINAIS ===\n")
+            info_file.write("W1:\n" + str(Nnw.W1) + "\n")
+            info_file.write("W2:\n" + str(Nnw.W2) + "\n\n")
+  
             print("==============================================================")
             print(f"\tEarly Stopping! - Best value loss: {best_val_loss:6f}")
             print("==============================================================")

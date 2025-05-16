@@ -1,9 +1,14 @@
 import numpy
 from NNW_Structure import MLP
-from confusion_matrix import create_confusion_matrix
+from plots import create_confusion_matrix
+
+problem = "NNW_Letters"
+
+# Abrir arquivo para registrar as informações
+info_file = open(f"./outputs/general_information/{problem}_Training_Weights.txt", "w")
 
 # File to store the outputs 
-file = open("./outputs/predictions/NNW_Letters_Early_Stopping_output.txt", "w")
+file = open(f"./outputs/predictions/{problem}.txt", "w")
 
 n_input = 120  # 120 pixels per image (input layer size)
 n_hidden = 150  # number of neurons in the hidden layer (chosen empirically)
@@ -11,9 +16,6 @@ n_output = 26  # 26 possible output classes (letters A-Z)
 learning_rate = 0.001
 epochs = 120
 batch_size = 32
-N_tests = 10  # number of independent training tests to compute mean accuracy
-
-problem = "NNW_Letters"
 
 # Lists to store true and predicted labels for the confusion matrix
 y_true = []
@@ -55,59 +57,43 @@ Y_test = Y[-130:]
 # Create neural network
 Nnw = MLP(n_input, n_hidden, n_output)
 
-def training_and_results():
-    Nnw.train_mlp(X_train, Y_train, learning_rate, epochs, batch_size)
 
-    scores = 0
+info_file.write("=== PESOS INICIAIS ===\n")
+info_file.write("W1:\n" + str(Nnw.W1) + "\n")
+info_file.write("W2:\n" + str(Nnw.W2) + "\n\n")
 
-    for x_sample, y_expected in zip(X_test, Y_test):
-        output = Nnw.forwardpass(x_sample.reshape(1, -1))
-        pred = numpy.argmax(output)
-        real = numpy.argmax(y_expected)
+Nnw.train_mlp(X_train, Y_train, learning_rate, epochs, batch_size)
 
-        # Save predictions for the confusion matrix
-        y_pred.append(pred)
-        y_true.append(real)
+info_file.write("=== PESOS FINAIS ===\n")
+info_file.write("W1:\n" + str(Nnw.W1) + "\n")
+info_file.write("W2:\n" + str(Nnw.W2) + "\n\n")
+    
+scores = 0
 
-        pred_letter = chr(pred + ord('A'))
-        real_letter = chr(real + ord('A'))
+for x_sample, y_expected in zip(X_test, Y_test):
+    output = Nnw.forwardpass(x_sample.reshape(1, -1))
+    pred = numpy.argmax(output)
+    real = numpy.argmax(y_expected)
 
-        if pred == real:
-            print(f"Predicted = {pred_letter} Expected = {real_letter} CORRECT")
-            file.write(f"Predicted = {pred_letter} Expected = {real_letter} CORRECT\n")
-            scores += 1
-        else:
-            print(f"Predicted = {pred_letter} Expected = {real_letter} WRONG")
-            file.write(f"Predicted = {pred_letter} Expected = {real_letter} WRONG\n")
+    # Save predictions for the confusion matrix
+    y_pred.append(pred)
+    y_true.append(real)
 
-    # Calculate accuracy for this test
-    accuracy = scores / len(X_test)
-    print(f"Accuracy: {accuracy:.2f}")
-    file.write(f"Accuracy: {accuracy:.2f}\n")
-    return accuracy
+    pred_letter = chr(pred + ord('A'))
+    real_letter = chr(real + ord('A'))
 
-def mean_value(num_tests):
-    accuracies = []  # Stores individual test accuracies
-    total_accuracy = 0.0
+    if pred == real:
+        print(f"Predicted = {pred_letter} Expected = {real_letter} CORRECT")
+        file.write(f"Predicted = {pred_letter} Expected = {real_letter} CORRECT\n")
+        scores += 1
+    else:
+        print(f"Predicted = {pred_letter} Expected = {real_letter} WRONG")
+        file.write(f"Predicted = {pred_letter} Expected = {real_letter} WRONG\n")
 
-    for _ in range(num_tests):
-        accuracy = training_and_results()
-        accuracies.append(accuracy)
-        total_accuracy += accuracy
-
-    mean = total_accuracy / num_tests
-
-    # Variance calculation (sample variance with ddof=1)
-    variance = numpy.var(accuracies, ddof=1)
-
-    return mean, variance  # Returns both mean accuracy and variance
-
-# Final execution
-final_mean, final_variance = mean_value(N_tests)
-print(f"Final Mean: {final_mean * 100:.0f}%")
-file.write(f"Final Mean: {final_mean * 100:.0f}%\n")
-print(f"Variance: {final_variance:.4f}")
-file.write(f"Variance: {final_variance:.4f}\n")
+# Calculate accuracy for this test
+accuracy = scores / len(X_test)
+print(f"Accuracy: {accuracy:.2f}")
+file.write(f"Accuracy: {accuracy:.2f}\n")
 
 file.close()
 

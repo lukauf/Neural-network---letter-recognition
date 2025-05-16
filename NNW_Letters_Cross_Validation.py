@@ -1,9 +1,14 @@
 import numpy
 from NNW_Structure import MLP
-from confusion_matrix import create_confusion_matrix
+from plots import create_confusion_matrix
+
+problem = "NNW_Letters_Cross_Validation"
+
+# Abrir arquivo para registrar as informações
+info_file = open(f"./outputs/general_information/{problem}_Training_Weights.txt", "w")
 
 # File to store the outputs 
-file = open("./outputs/predictions/NNW_Letters_Cross_Validation_output.txt","w")
+file = open(f"./outputs/predictions/{problem}.txt", "w")
 
 # Parâmetros da MLP
 n_input = 120
@@ -15,9 +20,6 @@ batch_size = 32
 
 problem = "NNW_Letters_Cross_Validation"
 
-# Confusion matrix
-y_true = []
-y_pred = []
 
 # Folds
 k_folds = 5
@@ -47,10 +49,14 @@ for i, idx in enumerate(indices):   #fills each one hot coded line with 1 on the
 num_samples = len(X)
 sample_indices = numpy.arange(num_samples)
 folds_size = num_samples // k_folds
-
 scores = []
 
 for k in range(k_folds):
+   
+    # Confusion matrix
+    y_true = []
+    y_pred = []
+
     print(f"Fold {k+1}:")
     file.write(f"Fold {k+1}:\n")
     val_idxs = sample_indices[k * folds_size: (k + 1) * folds_size]
@@ -84,11 +90,12 @@ for k in range(k_folds):
     print(f"Fold {k+1} Acc: {corrects}/{len(X_val)} → {acc:.2%}")
     file.write(f"Fold {k+1} Acc: {corrects}/{len(X_val)} → {acc:.2%}\n")
     scores.append(acc)
+    problem_fold = f"cross_validation_folds/{problem}_fold_{k+1}"
+    create_confusion_matrix(problem_fold, y_true, y_pred)
 
 # Final mean
 print(f"\nMean accuraccy: {numpy.mean(scores):.2%}")
 file.write(f"\nMean accuraccy: {numpy.mean(scores):.2%}\n")
-
+print(f"\nStandard Error: {numpy.std(scores):.2%}")
+file.write(f"\nStandard Error: {numpy.std(scores):.2%}\n")
 file.close()
-
-create_confusion_matrix(problem, y_true, y_pred)
