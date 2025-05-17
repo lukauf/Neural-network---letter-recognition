@@ -5,10 +5,10 @@ from plots import create_confusion_matrix
 problem = "NNW_Letters_Cross_Validation"
 
 # Abrir arquivo para registrar as informações
-info_file = open(f"./outputs/general_information/{problem}_Training_Weights.txt", "w")
+info_file = open(f"./outputs/general_information/{problem}_Training_Weights.txt", "w", encoding="utf-8")
 
 # File to store the outputs 
-file = open(f"./outputs/predictions/{problem}.txt", "w")
+file = open(f"./outputs/predictions/{problem}.txt", "w", encoding="utf-8")
 
 # Parâmetros da MLP
 n_input = 120
@@ -25,7 +25,7 @@ problem = "NNW_Letters_Cross_Validation"
 k_folds = 5
 
 X_linhas = []
-with open("./char_recognition/X.txt", "r") as f:
+with open("./char_recognition/X.txt", "r", encoding="utf-8") as f:
     for line in f:
         # Remove spaces, separates by "," and remove empty string
         values = [v.strip() for v in line.strip().split(",") if v.strip() != ""]
@@ -37,7 +37,7 @@ with open("./char_recognition/X.txt", "r") as f:
 
 X = numpy.array(X_linhas)
 
-with open("./char_recognition/Y_letra.txt", "r") as f:
+with open("./char_recognition/Y_letra.txt", "r",encoding="utf-8") as f:
     letters = [line.strip() for line in f]
 
 indices = [ord(letter) - ord('A') for letter in letters]  #this function uses ASCII/Unicode, so we don't need to set the index manualy

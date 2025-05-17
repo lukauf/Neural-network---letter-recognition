@@ -5,10 +5,10 @@ from plots import create_confusion_matrix
 problem = "NNW_Letters"
 
 # Abrir arquivo para registrar as informações
-info_file = open(f"./outputs/general_information/{problem}_Training_Weights.txt", "w")
+info_file = open(f"./outputs/general_information/{problem}_Training_Weights.txt", "w", encoding="utf-8")
 
 # File to store the outputs 
-file = open(f"./outputs/predictions/{problem}.txt", "w")
+file = open(f"./outputs/predictions/{problem}.txt", "w", encoding="utf-8")
 
 n_input = 120  # 120 pixels per image (input layer size)
 n_hidden = 150  # number of neurons in the hidden layer (chosen empirically)
@@ -24,7 +24,7 @@ y_pred = []
 # Preparing the input data:
 X_linhas = []
 
-with open("./char_recognition/X.txt", "r") as f:
+with open("./char_recognition/X.txt", "r", encoding="utf-8") as f:
     for line in f:
         values = [v.strip() for v in line.strip().split(",") if v.strip() != ""]
 
@@ -37,7 +37,7 @@ with open("./char_recognition/X.txt", "r") as f:
 X = numpy.array(X_linhas)
 
 # Preparing the labels
-with open("./char_recognition/Y_letra.txt", "r") as f:
+with open("./char_recognition/Y_letra.txt", "r", encoding="utf-8") as f:
     letters = [line.strip() for line in f]
 
 # Convert letters (A-Z) to indices (0-25)

@@ -90,6 +90,6 @@ class MLP:
                                 self.BackPropagation(X_batch, Y_batch, learning_rate)
 
         def print_error(self, E):
-                error_file = open("./outputs/error.txt", "w")
+                error_file = open("./outputs/error.txt", "w", encoding="utf-8")
                 error_file.write("=== ERRO DA CAMADA DE SAÍDA ===\n")
                 error_file.write(f"E: {str(E)}\n")
