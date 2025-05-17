@@ -34,4 +34,3 @@ def create_confusion_matrix(problem, y_true, y_pred):
     matplotlib.pyplot.ylabel('Real')
     matplotlib.pyplot.title('Confusion Matrix - Letter Recognition')
     matplotlib.pyplot.savefig(f"./outputs/confusion_matrix/{problem}_confusion_matrix.png")
-    

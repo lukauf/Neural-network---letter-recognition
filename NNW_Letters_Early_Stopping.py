@@ -1,6 +1,6 @@
 import numpy
 from NNW_Structure import MLP
-from plots import create_confusion_matrix
+from plots import create_confusion_matrix, plot_mse_values
 
 problem = "NNW_Letters_Early_Stopping"
 
@@ -17,6 +17,8 @@ learning_rate = 0.0009
 epochs = 200
 batch_size = 32
 
+best_values = []
+mse_epochs = []
 
 # Confusion matrix
 y_true = []
@@ -95,6 +97,9 @@ for epoch in range(epochs):
         best_val_loss = val_loss
         patience_counter = 0
 
+        best_values.append(best_val_loss)
+        mse_epochs.append(epoch+1)
+
         best_weights = {
             'W1': Nnw.W1.copy(),
             'b1': Nnw.b1.copy(),
@@ -139,3 +144,5 @@ for x_sample, y_expected in zip(X_test, Y_test):
 file.close()
 
 create_confusion_matrix(problem, y_true, y_pred)
+
+plot_mse_values(best_values, mse_epochs, problem)

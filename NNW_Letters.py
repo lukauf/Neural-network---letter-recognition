@@ -1,7 +1,7 @@
 import numpy
 from NNW_Structure import MLP
 from plots import create_confusion_matrix
-
+import sys
 problem = "NNW_Letters"
 
 # Abrir arquivo para registrar as informações
@@ -9,6 +9,8 @@ info_file = open(f"./outputs/general_information/{problem}_Training_Weights.txt"
 
 # File to store the outputs 
 file = open(f"./outputs/predictions/{problem}.txt", "w", encoding="utf-8")
+
+test = sys.argv[1]
 
 n_input = 120  # 120 pixels per image (input layer size)
 n_hidden = 150  # number of neurons in the hidden layer (chosen empirically)
@@ -69,7 +71,9 @@ info_file.write("W1:\n" + str(Nnw.W1) + "\n")
 info_file.write("W2:\n" + str(Nnw.W2) + "\n\n")
     
 scores = 0
-
+if test == "true":
+    exit()
+    
 for x_sample, y_expected in zip(X_test, Y_test):
     output = Nnw.forwardpass(x_sample.reshape(1, -1))
     pred = numpy.argmax(output)

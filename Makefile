@@ -6,7 +6,10 @@ install:
 	$(PYTHON) -m pip install -r requirements.txt
 
 letters:
-	$(PYTHON) $(LETTER).py
+	$(PYTHON) $(LETTER).py a
+
+letters-test:
+	$(PYTHON) $(LETTER).py yes
 
 letters-cross-validation:
 	$(PYTHON) $(LETTER)_Cross_Validation.py
