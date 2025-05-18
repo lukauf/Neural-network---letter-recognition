@@ -2,7 +2,7 @@ import numpy
 import matplotlib.pyplot as plt
 import seaborn as sns
 class MLP:
-        def __init__(self, n_input, n_hidden, n_output):  # 120 input neurons, Nh (arbitrary number) neurons at hidden layer, and 26 output neurons (26 letters/results)
+        def __init__(self, n_input, n_hidden, n_output): 
 
                 self.W1 = numpy.random.randn(n_input, n_hidden) * 0.01  # weight matrix 120xNh input layer -> hidden layer
                 self.W2 = numpy.random.randn(n_hidden, n_output) * 0.01  # weight matrix Nhx26 hidden layer -> output layer
@@ -61,7 +61,6 @@ class MLP:
                 output = self.forwardpass(X)
 
                 E = Y - output  # Raw error
-                self.print_error(E)
                 
                 self.dZ3 = E * self.hiperbolic_tan_derivative(self.Z2)  # Error multiplied by the tanh derivative results in the output gradient, calculates how much each output activation contributed to the total error
                 self.dW2 = numpy.dot(self.X2.T, self.dZ3)  # error propagation to the weights of the output layer, we use the transposed matrix so the multiplication is possible
@@ -78,81 +77,20 @@ class MLP:
                 self.W2 += alfa * self.dW2
                 self.b2 += alfa * db2
 
-        def train_mlp(self, X_train, Y_train, learning_rate, epochs, batch_size):
-                import traceback
-                print("================= Iniciando treinamento =================")
-                try:
-                        num_samples = X_train.shape[0]
-                        print(f"📊 Número de amostras de treino: {num_samples}")
+        def train_mlp(self, X_train, Y_train, learning_rate, epochs, batch_size):  # model = MLP class instance, X_train = training data, Y_train = training labels, learning_rate = alfa(backpropagation), epochs = number of times the entire dataset will be passed through the neural network, batch_size = the number of samples to be used on the training (number of rows in X_train)
+                num_samples = X_train.shape[0]
+                for epoch in range(epochs):
+                        indices = numpy.arange(num_samples)  # array of indices that correspond to the rows of the training data
+                        numpy.random.shuffle(indices)  # rearranges the elements of the indices array in a random order, so the model does not learn patterns based on the order of the data
+                        X_train = X_train[indices]  # the rows of X_train are rearranged in the same random order as the indices array
+                        Y_train = Y_train[indices]  # the rows of Y_train are rearranged in the same random order as the indices array
                         
-                        for epoch in range(epochs):
-                                print(f"➡️ Epoch {epoch+1}/{epochs}")
-
-                                indices = numpy.arange(num_samples)
-                                numpy.random.shuffle(indices)
-
-                                X_train = X_train[indices]
-                                Y_train = Y_train[indices]
-                                
-                                epoch_error = []
-                                for start in range(0, num_samples, batch_size):
-                                        end = start + batch_size
-                                        X_batch = X_train[start:end]
-                                        Y_batch = Y_train[start:end]
-
-                                        print(f"   🔁 Treinando batch: {start} a {end}")
-                                        try:
-                                                self.BackPropagation(X_batch, Y_batch, learning_rate)
-                                        except Exception as be:
-                                                print(f"❌ Erro no BackPropagation no batch {start}-{end}: {be}")
-                                                traceback.print_exc()
-                                                return  # Interrompe treinamento se falhar
-
-                                        batch_error = numpy.mean(numpy.abs(Y_batch - self.X3))
-                                        epoch_error.append(batch_error)
-
-                                self.errors_per_epoch.append(numpy.mean(epoch_error))
-                                print(f"✅ Epoch {epoch+1} concluída com erro médio: {self.errors_per_epoch[-1]:.4f}")
-
-                        self.plot_loss_curve()
-                        print("================= Treinamento Concluído =================")
-
-                except Exception as e:
-                        print("❌ Erro durante o treinamento:")
-                        print(f"Detalhes: {e}")
-                        traceback.print_exc()
-
-
-        def print_error(self, E):
-                self.plot_error_heatmap(E)
-                self.plot_error_distribution(E)
-
-        def plot_error_heatmap(self, E):
-                plt.figure(figsize=(12, 5))
-                sns.heatmap(E, annot=True, fmt=".2f", cmap="coolwarm", cbar=True)
-                plt.title("Erro da Camada de Saída (Heatmap)")
-                plt.xlabel("Neurônios de Saída")
-                plt.ylabel("Amostras (Batch)")
-                plt.tight_layout()
-                plt.savefig("./outputs/error_heatmap.png")
-                plt.close()
-
-        def plot_error_distribution(self, E):
-                flat_errors = numpy.array(E).flatten()
-                plt.hist(flat_errors, bins=20, edgecolor='black')
-                plt.title("Distribuição dos Erros da Camada de Saída")
-                plt.xlabel("Erro")
-                plt.ylabel("Frequência")
-                plt.tight_layout()
-                plt.savefig("./outputs/error_histogram.png")
-                plt.close()
-
-        def plot_loss_curve(self):
-                plt.figure(figsize=(10, 5))
-                plt.plot(self.errors_per_epoch)
-                plt.title("Convergência do Erro (Loss por Época)")
-                plt.xlabel("Época")
-                plt.ylabel("Erro Médio Absoluto")
-                plt.grid(True)
-                plt.tight_layout()
-                plt.savefig("./outputs/loss_curve.png")
+                        epoch_error = []
+                        for start in range(0, num_samples, batch_size):  # there will be weights changes at every iteration based on the training using the number of samples in the batch
+                                end = start + batch_size  # So if the batch_size = 30, we will go from 0-30, 30-60, 60-90...
+                                X_batch = X_train[start:end]
+                                Y_batch = Y_train[start:end]
+                                self.BackPropagation(X_batch, Y_batch, learning_rate)
+                                batch_error = numpy.mean(numpy.abs(Y_batch - self.X3))
+                                epoch_error.append(batch_error)
+                        self.errors_per_epoch.append(numpy.mean(epoch_error))
