@@ -13,6 +13,7 @@ Here's the options:<br/>
 <li>make logic-gates AND - AND logic gate outputs</li>
 <li>make logic-gates OR - OT logic gate outputs</li>
 <li>make logic-gates XOR - XOR logic gate outputs</li>
+<li>make letters-early-stopping-noise - letter recognition with early stopping and noise (train + test)</li>
 </ul> 
 
 ## Coisa para fazer

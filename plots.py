@@ -37,7 +37,6 @@ def create_confusion_matrix(problem, y_true, y_pred, n_output):
     plt.savefig(f"./outputs/confusion_matrix/{problem}_confusion_matrix.png")
 
 def print_error(errors_per_epoch, problem):
-    plot_error_distribution(errors_per_epoch, problem)
     plot_loss_curve(errors_per_epoch, problem)
 
 def plot_loss_curve(errors_mean, problem):
@@ -50,14 +49,3 @@ def plot_loss_curve(errors_mean, problem):
     plt.tight_layout()
     plt.savefig(f"./outputs/errors/loss_curve/{problem}_loss_curve.png")
 
-
-
-def plot_error_distribution(errors_per_epoch, problem):
-        flat_errors = numpy.array(errors_per_epoch).flatten()
-        plt.hist(flat_errors, bins=20, edgecolor='black')
-        plt.title("Mean of errors in the output Layer")
-        plt.xlabel("Error")
-        plt.ylabel("Frequency")
-        plt.tight_layout()
-        plt.savefig(f"./outputs/errors/histogram/{problem}_error_histogram.png")
-        plt.close()
