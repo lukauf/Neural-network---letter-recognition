@@ -76,12 +76,18 @@ for k in range(k_folds):
     info_file.write(f"=== MÉDIA DOS PESOS INICIAIS - FOLD {k+1}===\n")
     info_file.write("W1:\n" + str(numpy.mean(Nnw.W1)) + "\n")
     info_file.write("W2:\n" + str(numpy.mean(Nnw.W2)) + "\n\n")
+    print(f"=== MÉDIA DOS PESOS INICIAIS - FOLD {k+1}===\n")
+    print("W1:\n" + str(numpy.mean(Nnw.W1)) + "\n")
+    print("W2:\n" + str(numpy.mean(Nnw.W2)) + "\n\n")
 
     Nnw.train_mlp(X_train_fold, Y_train_fold, learning_rate, epochs, batch_size)
     
     info_file.write(f"=== MÉDIA DOS PESOS FINAIS - FOLD {k+1}===\n")
     info_file.write("W1:\n" + str(numpy.mean(Nnw.W1)) + "\n")
     info_file.write("W2:\n" + str(numpy.mean(Nnw.W2)) + "\n\n")
+    print(f"=== MÉDIA DOS PESOS FINAIS - FOLD {k+1}===\n")
+    print("W1:\n" + str(numpy.mean(Nnw.W1)) + "\n")
+    print("W2:\n" + str(numpy.mean(Nnw.W2)) + "\n\n")
 
     corrects = 0
     for x_sample, y_expected in zip(X_val, Y_val):
