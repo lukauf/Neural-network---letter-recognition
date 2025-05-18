@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from NNW_Structure import MLP
 import os
 import time
@@ -40,14 +41,13 @@ def grid_search():
     try:
         X, Y = load_data()
 
-        hidden_sizes = [64, 128, 256]
-        learning_rates = [0.01, 0.001, 0.0001]
+        hidden_sizes = [73, 56, 106] #regra da média, regra do produto, regra do 2/3
+        learning_rates = [0.001, 0.0001]
         batch_sizes = [16, 32]
-        epoch_options = [30, 60, 100]
+        epoch_options = [100, 300, 500]
         patiences = [5, 10]
-        k_folds_options = [5, 8, 10]
+        k_folds_options = [3, 5]
 
-        # Separação fixa: primeiros 130 para teste, o restante para treino
         X_test, Y_test = X[:130], Y[:130]
         X_train_full, Y_train_full = X[130:], Y[130:]
 
@@ -57,6 +57,7 @@ def grid_search():
         best_acc_train = 0
         current_run = 1
         start_time = time.time()
+        train_results = []
 
         total_runs = len(hidden_sizes) * len(learning_rates) * len(batch_sizes) * len(epoch_options)
 
@@ -69,15 +70,24 @@ def grid_search():
                         model.train_mlp(X_train_full, Y_train_full, lr, ep, bs)
                         acc = evaluate(model, X_test, Y_test)
 
+                        train_results.append({
+                            "hidden": h, "lr": lr, "batch": bs, "epochs": ep, "accuracy": acc
+                        })
+
                         if acc > best_acc_train:
                             best_acc_train = acc
                             best_params_train = {"hidden": h, "lr": lr, "batch": bs, "epochs": ep}
                         current_run += 1
 
-        print(f"\nMelhor config. (padrão): {best_params_train} com acc={best_acc_train:.4f}")
         elapsed = time.time() - start_time
         minutes_train, seconds_train = divmod(elapsed, 60)
-        print(f"\nTempo total de execução (padrão): {int(minutes_train)}:{int(seconds_train):02d} (min:seg)")
+
+        df_train = pd.DataFrame(train_results).sort_values(by="accuracy", ascending=False)
+        print("\nTabela de Resultados (Padrão):")
+        print(df_train)
+
+        print(f"\nMelhor config. (padrão): {best_params_train} com acc={best_acc_train:.4f}")
+        print(f"Tempo total: {int(minutes_train)}:{int(seconds_train):02d} (min:seg)")
 
         # === Parte 2: Parada Antecipada ===
         print("\n=== TREINAMENTO COM PARADA ANTECIPADA ===\n")
@@ -85,6 +95,7 @@ def grid_search():
         best_acc_early = 0
         current_run = 1
         start_time = time.time()
+        early_results = []
 
         num_samples = len(X_train_full)
         train_end = int(0.9 * num_samples)
@@ -131,6 +142,10 @@ def grid_search():
                                 model.b2 = best_weights['b2']
 
                             acc = evaluate(model, X_test, Y_test)
+                            early_results.append({
+                                "hidden": h, "lr": lr, "batch": bs, "max_epochs": ep, "patience": patience, "accuracy": acc
+                            })
+
                             if acc > best_acc_early:
                                 best_acc_early = acc
                                 best_params_early = {
@@ -138,10 +153,15 @@ def grid_search():
                                 }
                             current_run += 1
 
-        print(f"\nMelhor config. (early stopping): {best_params_early} com acc={best_acc_early:.4f}")
         elapsed = time.time() - start_time
         minutes_early, seconds_early = divmod(elapsed, 60)
-        print(f"\nTempo total de execução (early stopping)): {int(minutes_early)}:{int(seconds_early):02d} (min:seg)")
+
+        df_early = pd.DataFrame(early_results).sort_values(by="accuracy", ascending=False)
+        print("\nTabela de Resultados (Early Stopping):")
+        print(df_early)
+
+        print(f"\nMelhor config. (early stopping): {best_params_early} com acc={best_acc_early:.4f}")
+        print(f"Tempo total: {int(minutes_early)}:{int(seconds_early):02d} (min:seg)")
 
         # === Parte 3: Validação Cruzada ===
         print("\n=== VALIDAÇÃO CRUZADA ===\n")
@@ -149,6 +169,7 @@ def grid_search():
         best_acc_cv = 0
         current_run = 1
         start_time = time.time()
+        cv_results = []
 
         total_runs = len(hidden_sizes) * len(learning_rates) * len(batch_sizes) * len(epoch_options) * len(k_folds_options)
 
@@ -177,18 +198,27 @@ def grid_search():
                                 scores.append(acc)
 
                             mean_acc = np.mean(scores)
+                            cv_results.append({
+                                "hidden": h, "lr": lr, "batch": bs, "epochs": ep, "k_folds": k_folds, "mean_accuracy": mean_acc
+                            })
+
                             if mean_acc > best_acc_cv:
                                 best_acc_cv = mean_acc
                                 best_params_cv = {"hidden": h, "lr": lr, "batch": bs, "epochs": ep, "k_folds": k_folds}
 
                             current_run += 1
 
-        print(f"\nMelhor config. (cross-validation): {best_params_cv} com acc={best_acc_cv:.4f}")
         elapsed = time.time() - start_time
         minutes_cv, seconds_cv = divmod(elapsed, 60)
-        print(f"\nTempo total de execução (cross-validation): {int(minutes_cv)}:{int(seconds_cv):02d}")
 
-        # Salvar os resultados
+        df_cv = pd.DataFrame(cv_results).sort_values(by="mean_accuracy", ascending=False)
+        print("\nTabela de Resultados (Cross-Validation):")
+        print(df_cv)
+
+        print(f"\nMelhor config. (cross-validation): {best_params_cv} com acc={best_acc_cv:.4f}")
+        print(f"Tempo total: {int(minutes_cv)}:{int(seconds_cv):02d} (min:seg)")
+
+        # Salvando resumo final
         results_dir = "./outputs/"
         os.makedirs(results_dir, exist_ok=True)
         results = [
@@ -207,7 +237,7 @@ def grid_search():
             ">>> Melhor configuração (Cross-Validation):",
             f"    Parâmetros: {best_params_cv}",
             f"    Acurácia média: {best_acc_cv:.4f}",
-            f"    Tempo:      {int(minutes_cv)}:{int(seconds_cv):02d} (min:seg)",
+            f"    Tempo:      {int(minutes_cv)}:{int(seconds_cv):02d}",
             "",
             "==============================================="
         ]
