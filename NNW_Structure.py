@@ -1,12 +1,15 @@
 import numpy
-
+import matplotlib.pyplot as plt
+import seaborn as sns
 class MLP:
-        def __init__(self, n_input, n_hidden, n_output):  # 120 input neurons, Nh (arbitrary number) neurons at hidden layer, and 26 output neurons (26 letters/results)
+        def __init__(self, n_input, n_hidden, n_output): 
 
                 self.W1 = numpy.random.randn(n_input, n_hidden) * 0.01  # weight matrix 120xNh input layer -> hidden layer
                 self.W2 = numpy.random.randn(n_hidden, n_output) * 0.01  # weight matrix Nhx26 hidden layer -> output layer
                 self.b1 = numpy.random.randn(1, n_hidden)  # bias matrix 1xNh hidden layer bias matrix
                 self.b2 = numpy.random.randn(1, n_output)
+
+                self.errors_per_epoch = [] # Show errors on training
 
         # each column represents the weights associated to a neuron from the next layer
         # each row represents the weights that a neuron from the current layer sends to neurons in the next layer
@@ -58,7 +61,6 @@ class MLP:
                 output = self.forwardpass(X)
 
                 E = Y - output  # Raw error
-                self.print_error(E)
                 
                 self.dZ3 = E * self.hiperbolic_tan_derivative(self.Z2)  # Error multiplied by the tanh derivative results in the output gradient, calculates how much each output activation contributed to the total error
                 self.dW2 = numpy.dot(self.X2.T, self.dZ3)  # error propagation to the weights of the output layer, we use the transposed matrix so the multiplication is possible
@@ -82,14 +84,13 @@ class MLP:
                         numpy.random.shuffle(indices)  # rearranges the elements of the indices array in a random order, so the model does not learn patterns based on the order of the data
                         X_train = X_train[indices]  # the rows of X_train are rearranged in the same random order as the indices array
                         Y_train = Y_train[indices]  # the rows of Y_train are rearranged in the same random order as the indices array
-
+                        
+                        epoch_error = []
                         for start in range(0, num_samples, batch_size):  # there will be weights changes at every iteration based on the training using the number of samples in the batch
                                 end = start + batch_size  # So if the batch_size = 30, we will go from 0-30, 30-60, 60-90...
                                 X_batch = X_train[start:end]
                                 Y_batch = Y_train[start:end]
                                 self.BackPropagation(X_batch, Y_batch, learning_rate)
-
-        def print_error(self, E):
-                error_file = open("./outputs/error.txt", "w")
-                error_file.write("=== ERRO DA CAMADA DE SAÍDA ===\n")
-                error_file.write(f"E: {str(E)}\n")
+                                batch_error = numpy.mean(numpy.abs(Y_batch - self.X3))
+                                epoch_error.append(batch_error)
+                        self.errors_per_epoch.append(numpy.mean(epoch_error))

@@ -6,13 +6,25 @@ install:
 	$(PYTHON) -m pip install -r requirements.txt
 
 letters:
-	$(PYTHON) $(LETTER).py
+	$(PYTHON) $(LETTER).py a
+
+letters-training:
+	$(PYTHON) $(LETTER).py yes
 
 letters-cross-validation:
 	$(PYTHON) $(LETTER)_Cross_Validation.py
 
+letters-cross-validation-early-stopping:
+	$(PYTHON) $(LETTER)_CV_Early_Stopping.py
+
 letters-early-stopping:
-	$(PYTHON) $(LETTER)_Early_Stopping.py
+	$(PYTHON) $(LETTER)_Early_Stopping.py a
+
+letters-early-stopping-noise:
+	$(PYTHON) $(LETTER)_Early_Stopping.py noise
+
+letters-early-stopping-merge-classes:
+	$(PYTHON) $(LETTER)_Early_Stopping.py merge-classes
 
 logic-gates-AND:
 	$(PYTHON) $(GATES).py AND

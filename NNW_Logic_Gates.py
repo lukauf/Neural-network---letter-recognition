@@ -7,7 +7,7 @@ args = sys.argv
 problem = args[1]
 
 # File to store the outputs 
-file = open(f"./outputs/NNW_Logic_Gates_{problem}_output.txt","w")
+file = open(f"./outputs/NNW_Logic_Gates_{problem}_output.txt","w", encoding="utf-8")
 
 n_hidden = 200 # AND and OR need lower values
 epochs = 10000 # AND and OR need lower values
