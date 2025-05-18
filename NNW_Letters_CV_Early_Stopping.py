@@ -6,10 +6,10 @@ from plots import create_confusion_matrix, print_error
 problem = "NNW_Letters_CV_Early_Stopping"
 k_folds = 5
 n_input = 120
-n_hidden = 250
 n_output = 26
-learning_rate = 0.0009
-epochs = 600
+n_hidden = 73
+learning_rate = 0.001
+epochs = 300
 batch_size = 32
 patience = 10
 
@@ -52,7 +52,6 @@ for k in range(k_folds):
 
     val_idxs = sample_indices[k * fold_size: (k + 1) * fold_size]
     train_idxs = np.setdiff1d(sample_indices, val_idxs)
-
     X_train_fold, Y_train_fold = X_train[train_idxs], Y_train[train_idxs]
     X_val, Y_val = X_train[val_idxs], Y_train[val_idxs]
 

@@ -16,12 +16,12 @@ info_file = open(f"./outputs/weights/{problem}_Training_Weights.txt", "w", encod
 file = open(f"./outputs/predictions/{problem}.txt", "w", encoding="utf-8")
 
 n_input = 120  #120 pixel images
-n_hidden = 250  #arbitrary
 n_output = 26  #26 possible outputs to be interpreted
-learning_rate = 0.0009
-epochs = 600
+n_hidden = 73 
+learning_rate = 0.001
+epochs = 300
 batch_size = 32
-
+patience = 10
 # add difficulties on the test
 
 
@@ -35,7 +35,6 @@ y_true = []
 y_pred = []
 
 # patience
-patience = 10
 patience_counter = 0
 
 best_val_loss = float('inf')
@@ -58,12 +57,11 @@ with open("./char_recognition/X.txt", "r", encoding="utf-8") as f:
 X = numpy.array(X_linhas)
 
 if difficulty == "noise":
-    # Adiciona ruído gaussiano com média 0 e desvio padrão 0.3
+    # Add noise with mean 0 e SE 0.3
     noise = numpy.random.normal(loc=0.0, scale=0.3, size=X.shape)
     X += noise
-
-    # Garante que os valores continuem próximos de -1 a 1 (com leve tolerância)
-    X = numpy.clip(X, -1.5, 1.5)
+    # Values near -1 and 1
+    X = numpy.clip(X, -1, 1)
 
 with open("./char_recognition/Y_letra.txt", "r", encoding="utf-8") as f:
     letters = [line.strip() for line in f]

@@ -12,16 +12,14 @@ file = open(f"./outputs/predictions/{problem}.txt", "w", encoding="utf-8")
 
 # Parâmetros da MLP
 n_input = 120
-n_hidden = 250
 n_output = 26
-learning_rate = 0.0009
-epochs = 150
+n_hidden = 73
+learning_rate = 0.001
+epochs = 300
 batch_size = 32
+k_folds = 5
 
 problem = "NNW_Letters_Cross_Validation"
-
-# Folds
-k_folds = 5
 
 X_linhas = []
 with open("./char_recognition/X.txt", "r", encoding="utf-8") as f:
