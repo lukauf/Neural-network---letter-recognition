@@ -4,7 +4,7 @@ from NNW_Structure import MLP
 import os
 import time
 
-# === Preparação dos dados ===
+# === Prepare Data ===
 def load_data():
     X_linhas = []
     with open("./char_recognition/X.txt", "r", encoding="utf-8") as f:
@@ -25,7 +25,7 @@ def load_data():
 
     return X, Y
 
-# === Avaliação da acurácia ===
+# === Accuracy evaluation ===
 def evaluate(model, X_val, Y_val):
     correct = 0
     for x_sample, y_expected in zip(X_val, Y_val):
@@ -41,7 +41,7 @@ def grid_search():
     try:
         X, Y = load_data()
 
-        hidden_sizes = [73, 56, 106] #regra da média, regra do produto, regra do 2/3
+        hidden_sizes = [73, 56, 106] # Mean rule , Product Rule, 2/3 Rule
         learning_rates = [0.001, 0.0001]
         batch_sizes = [16, 32]
         epoch_options = [100, 300, 500]
@@ -51,8 +51,8 @@ def grid_search():
         X_test, Y_test = X[:130], Y[:130]
         X_train_full, Y_train_full = X[130:], Y[130:]
 
-        # === Parte 1: Treinamento padrão ===
-        print("\n=== TREINAMENTO PADRÃO ===\n")
+        # === Part 1: Default training ===
+        print("\n=== DEFAULT TRAINING ===\n")
         best_params_train = {}
         best_acc_train = 0
         current_run = 1
@@ -89,7 +89,7 @@ def grid_search():
         print(f"\nMelhor config. (padrão): {best_params_train} com acc={best_acc_train:.4f}")
         print(f"Tempo total: {int(minutes_train)}:{int(seconds_train):02d} (min:seg)")
 
-        # === Parte 2: Parada Antecipada ===
+        # === Part 2: Early Stopping ===
         print("\n=== TREINAMENTO COM PARADA ANTECIPADA ===\n")
         best_params_early = {}
         best_acc_early = 0
@@ -163,8 +163,8 @@ def grid_search():
         print(f"\nMelhor config. (early stopping): {best_params_early} com acc={best_acc_early:.4f}")
         print(f"Tempo total: {int(minutes_early)}:{int(seconds_early):02d} (min:seg)")
 
-        # === Parte 3: Validação Cruzada ===
-        print("\n=== VALIDAÇÃO CRUZADA ===\n")
+        # === Part 3: Cross Validation ===
+        print("\n=== CROSS VALIDATION ===\n")
         best_params_cv = {}
         best_acc_cv = 0
         current_run = 1
@@ -218,7 +218,7 @@ def grid_search():
         print(f"\nMelhor config. (cross-validation): {best_params_cv} com acc={best_acc_cv:.4f}")
         print(f"Tempo total: {int(minutes_cv)}:{int(seconds_cv):02d} (min:seg)")
 
-        # Salvando resumo final
+        # Store the final results
         results_dir = "./outputs/"
         os.makedirs(results_dir, exist_ok=True)
         results = [

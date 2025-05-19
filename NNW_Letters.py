@@ -4,16 +4,16 @@ from plots import create_confusion_matrix, print_error
 import sys
 problem = "NNW_Letters"
 
-# Abrir arquivo para registrar as informações
+# Files to store the outputs
 info_file = open(f"./outputs/weights/{problem}_Training_Weights.txt", "w", encoding="utf-8")
 
-# File to store the outputs 
 file = open(f"./outputs/predictions/{problem}.txt", "w", encoding="utf-8")
 
 training = sys.argv[1]
 
 n_input = 120  # 120 pixels per image (input layer size)
 n_output = 26  # 26 possible output classes (letters A-Z)
+
 n_hidden = 73
 learning_rate = 0.001
 epochs = 300

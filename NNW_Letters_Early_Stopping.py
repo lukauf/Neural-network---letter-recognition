@@ -3,13 +3,15 @@ import numpy
 from NNW_Structure import MLP
 from plots import create_confusion_matrix, print_error, plot_loss_curve
 
+# add difficulties on the test
 difficulty = sys.argv[1]
+
 problem = "NNW_Letters_Early_Stopping"
 
 if difficulty == "noise" or difficulty == "merge-classes":
     problem = f"{problem}_{difficulty}"
 
-# Abrir arquivo para registrar as informações
+# File to store the outputs
 info_file = open(f"./outputs/weights/{problem}_Training_Weights.txt", "w", encoding="utf-8")
 
 # File to store the outputs 
@@ -17,13 +19,13 @@ file = open(f"./outputs/predictions/{problem}.txt", "w", encoding="utf-8")
 
 n_input = 120  #120 pixel images
 n_output = 26  #26 possible outputs to be interpreted
+
 n_hidden = 73 
 learning_rate = 0.001
-epochs = 300
+epochs = 600
 batch_size = 32
+N_tests = 1
 patience = 10
-# add difficulties on the test
-
 
 best_values = []
 
@@ -67,7 +69,7 @@ with open("./char_recognition/Y_letra.txt", "r", encoding="utf-8") as f:
     letters = [line.strip() for line in f]
 
 if difficulty == "merge-classes":
-    # Novo mapeamento de letras com agrupamentos
+    # Group letters
     classe_map = {}
     nova_classe = 0
 
@@ -76,20 +78,18 @@ if difficulty == "merge-classes":
         "IJT": ["I", "J", "T"]
     }
 
-    # Atribuir classes agrupadas
     for grupo, letras_grupo in agrupamentos.items():
         for letra in letras_grupo:
             classe_map[letra] = nova_classe
         nova_classe += 1
 
-    # Atribuir classes restantes
     for letra in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
         if letra not in classe_map:
             classe_map[letra] = nova_classe
             nova_classe += 1
 
-    # Atualiza a saída Y com base no novo mapeamento
-    n_output = len(set(classe_map.values()))  # agora é 24
+    # Update n_output
+    n_output = len(set(classe_map.values())) 
     Y = numpy.zeros((len(letters), n_output))
 
     for i, letra in enumerate(letters):
@@ -139,12 +139,10 @@ for epoch in range(epochs):
 
     val_outputs = Nnw.forwardpass(X_val)
 
-    # Cálculo do erro médio absoluto por época
+    # Mean error absolute per epoch
     
-    # Erros
     val_errors = numpy.abs(Y_val - val_outputs)
 
-    # Cálculo do erro médio absoluto por época
     val_abs_error_mean = numpy.mean(val_errors)
     
     val_mean_errors.append(val_abs_error_mean)
@@ -174,13 +172,13 @@ for epoch in range(epochs):
         file.write(f"No best results. Patience: {patience_counter}/{patience}\n")
 
         if patience_counter >= patience:
-            info_file.write("=== PESOS FINAIS ===\n")
+            info_file.write("=== FINAL WEIGHTS ===\n")
             info_file.write("W1:\n" + str(Nnw.W1) + "\n")
             info_file.write("W2:\n" + str(Nnw.W2) + "\n\n")
-            info_file.write("=== MÉDIA DOS PESOS FINAIS ===\n")
+            info_file.write("=== FINAL WEIGHTS MEAN ===\n")
             info_file.write("W1:\n" + str(numpy.mean(Nnw.W1)) + "\n")
             info_file.write("W2:\n" + str(numpy.mean(Nnw.W2)) + "\n\n")
-            print("=== MÉDIA DOS PESOS FINAIS ===\n")
+            print("=== FINAL WEIGTHS MEAN ===\n")
             print("W1:\n" + str(numpy.mean(Nnw.W1)) + "\n")
             print("W2:\n" + str(numpy.mean(Nnw.W2)) + "\n\n")
             
@@ -216,8 +214,6 @@ for x_sample, y_expected in zip(X_test, Y_test):
     pred_letter = chr(pred + ord('A'))#converts the indice to letter
     real_letter = chr(real + ord('A'))#converts the indice to letter
 
-file.close()
-
 create_confusion_matrix(problem, y_true, y_pred, n_output)
 
 val_problem = f"{problem}_validation"
@@ -225,3 +221,18 @@ plot_loss_curve(val_mean_errors, val_problem)
 
 test_problem = f"{problem}_test"
 plot_loss_curve(test_mean_errors, test_problem)
+
+if patience_counter < patience:
+    print(f"Best MSE Value = {best_val_loss:6f}")
+    file.write(f"\nBest MSE Value = {best_val_loss:6f}\n")
+    info_file.write("=== FINAL WEIGHTS ===\n")
+    info_file.write("W1:\n" + str(Nnw.W1) + "\n")
+    info_file.write("W2:\n" + str(Nnw.W2) + "\n\n")
+    info_file.write("=== FINAL WEIGHTS MEAN ===\n")
+    info_file.write("W1:\n" + str(numpy.mean(Nnw.W1)) + "\n")
+    info_file.write("W2:\n" + str(numpy.mean(Nnw.W2)) + "\n\n")
+    print("=== FINAL WEIGHTS MEAN ===\n")
+    print("W1:\n" + str(numpy.mean(Nnw.W1)) + "\n")
+    print("W2:\n" + str(numpy.mean(Nnw.W2)) + "\n\n")
+
+file.close()
