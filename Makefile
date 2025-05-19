@@ -22,9 +22,6 @@ letters-training:
 letters-cross-validation:
 	$(PYTHON) $(LETTER)_Cross_Validation.py
 
-letters-cross-validation-early-stopping:
-	$(PYTHON) $(LETTER)_CV_Early_Stopping.py
-
 letters-early-stopping:
 	$(PYTHON) $(LETTER)_Early_Stopping.py a
 
